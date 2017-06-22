@@ -1,0 +1,17 @@
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/Assembly-CSharp.dll.mdb
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/Assembly-CSharp.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/obj/Debug/Assembly-CSharp.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/obj/Debug/Assembly-CSharp.dll.mdb
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/UnityEngine.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/UnityEditor.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/UnityEngine.Networking.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/UnityEngine.UI.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/Mono.Cecil.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/Unity.SerializationLogic.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/Unity.DataContract.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/Unity.UNetWeaver.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/Unity.CecilTools.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/Users/sonido/Aizu/UnityLibpd-Mac/UnityLibpd/Temp/bin/Debug/Mono.Cecil.Mdb.dll

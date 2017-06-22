@@ -1,0 +1,14 @@
+#N canvas 611 224 450 300 10;
+#X obj 173 88 osc~ 582;
+#X obj 239 56 loadbang;
+#X msg 243 88 1;
+#X obj 262 107 metro 1000;
+#X obj 280 128 random 500;
+#X obj 275 148 + 100;
+#X obj 162 197 dac~ 1;
+#X connect 0 0 6 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
+#X connect 4 0 5 0;
+#X connect 5 0 0 0;
