@@ -13,7 +13,7 @@ public class HRIR : MonoBehaviour {
 	public int dollarzero = -999;
 	private bool _isPlaying = false;
 	private bool _isNew = true;
-	private GameObject listener=null; //Listener object
+	public GameObject listener=null; //Listener object
 
 	public bool isNew{
 		get{
@@ -40,13 +40,16 @@ public class HRIR : MonoBehaviour {
 	*/
 	public bool Load_Audio(string msg,params object[] args){
 		string[] splt = msg.Split ('.');
-		if(!File.Exists(Application.dataPath+"/"+msg) || splt[splt.Length-1]!="wav" )
+		if(!File.Exists(Application.dataPath+msg) || splt[splt.Length-1]!="wav" )
 		{
 			Debug.LogWarning ("Error, Can't load file, it's not wav or file not exist");
 			return false;
 		}
-		LibPD.SendMessage(dollarzero.ToString ()+"-Load","set symbol "+Application.dataPath+"/"+msg,args);
-		return true;
+		int answer=LibPD.SendSymbol(dollarzero.ToString ()+"-Load",Application.dataPath+msg);
+		if (answer == 0)
+			return true;
+		else
+			return false;
 	}
 	/*
 	Function to reproduce song just once in HRIR
@@ -73,6 +76,14 @@ public class HRIR : MonoBehaviour {
 	*/
 	public void Stop(){
 		LibPD.SendBang(dollarzero.ToString ()+"-Stop");
+	}
+	/*
+	Function to set available or unavailable the default microphone 
+	Parameters: variable bool available
+	*/
+	public void Mic (bool available){
+		if (available) LibPD.SendFloat (dollarzero.ToString () + "-Mic", 1f); 
+		else LibPD.SendFloat (dollarzero.ToString () + "-Mic", 0f);	
 	}
 	/*
 	Function to update azimuth in HRIR

@@ -380,6 +380,12 @@ namespace LibPDBinding
 			return ret;
 		}
 
+		public static int Send_Message(string receiver, string message){
+			start_message (2);
+			add_symbol ("symbol");
+			add_symbol (message);
+			return finish_message (receiver,"set");
+		}
 
 		[DllImport("pdcsharp", EntryPoint="libpd_finish_list")]
 		private static extern  int finish_list([In] [MarshalAs(UnmanagedType.LPStr)] string recv) ;
