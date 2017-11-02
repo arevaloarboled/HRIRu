@@ -53,6 +53,7 @@
      <Compile Include="Assets\LibPD\PdAudioSource.cs" />
      <Compile Include="Assets\LibPD\PdManager.cs" />
      <Compile Include="Assets\LibPD\PdStereo.cs" />
+     <Compile Include="Assets\Prefab\Scripts\cam_move.cs" />
      <Compile Include="Assets\Prefab\Scripts\drone_script.cs" />
  <Reference Include="UnityEngine.Analytics">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>

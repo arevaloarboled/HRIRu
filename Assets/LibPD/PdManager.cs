@@ -172,6 +172,10 @@ public class PdManager : MonoBehaviour {
 		//---------------these lines will crash, don't use!!!-------------------
 		//if (numberOfOutputChannel != 0) createDac ();
 		//if (numberOfInputChannel != 0) 	createAdc ();
+
+		if(sampleRT_Mic==null || sampleRT_Mic==0){
+			sampleRT_Mic = 44100; 
+		}
 		if (numberOfInputChannel != 0) {
 			foreach (string device in Microphone.devices) {
 				if(Mic_Device==device){
@@ -189,10 +193,12 @@ public class PdManager : MonoBehaviour {
 	}
 
 	void Update(){
-		int pos = Microphone.GetPosition (Mic_Device);
-		if (pos - 1024 > 0)
-			pos = pos - 1024+1;
-		Mic.GetData(PDMic_Input,pos);	
+		if(numberOfInputChannel != 0){
+			int pos = Microphone.GetPosition (Mic_Device);
+			if (pos - 1024 > 0)
+				pos = pos - 1024+1;
+			Mic.GetData(PDMic_Input,pos);	
+		}
 	}		
 
 

@@ -4,32 +4,32 @@ using UnityEngine;
 
 public class drone_script : MonoBehaviour {
 	private HRIR hrir_control;
+
+	public float scale=0f;
+	public float tp=0.5f;
+	private float t=0f;
+	public int tipe_move=0;
 	// Use this for initialization
 	void Start () {
 		hrir_control=this.GetComponent<HRIR>();
-		//hrir_control.Play_Loop("/Prefab/Sounds/DRONE_sound.wav");
+		hrir_control.Play_Loop("/Prefab/Sounds/DRONE_sound.wav");
 		//hrir_control.Mic(true);
+		if(scale<=0f)
+			scale = 5f;
+		if(tp<=0f)
+			tp = 0.5f;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetKey("w")){
-			transform.position = transform.position + Vector3.forward*0.5f;
+		Vector3 tmp=new Vector3(0,0,0);
+		if (tipe_move == 0) {
+			tmp= new Vector3 (Mathf.Sin (2 * t), Mathf.Cos (2 * t), Mathf.Cos (3 * t));	
 		}
-		if(Input.GetKey("s")){
-			transform.position = transform.position + Vector3.back*0.5f;
+		if (tipe_move == 1) {
+			tmp= new Vector3 (Mathf.Cos (5 * t), Mathf.Cos (t) + Mathf.Cos (5 * t), Mathf.Sin (3 * t));	
 		}
-		if(Input.GetKey("d")){
-			transform.position = transform.position + Vector3.right*0.5f;
-		}
-		if(Input.GetKey("a")){
-			transform.position = transform.position + Vector3.left*0.5f;
-		}
-		if(Input.GetKey("e")){
-			transform.position = transform.position + Vector3.up*0.5f;
-		}
-		if(Input.GetKey("q")){
-			transform.position = transform.position + Vector3.down*0.5f;
-		}
+		transform.position = tmp * scale;
+		t = t + tp;
 	}
 }
