@@ -15,6 +15,14 @@ public class PdManager : MonoBehaviour {
 	private bool _pdDsp = true;
 	private List<int> _loadedPatches = new List<int>();
 	private GameObject pdMixer;
+	public string Mic_Device=""; //Microsoft® LifeCam HD-5000
+	public int sampleRT_Mic;
+
+	//
+	private AudioClip Mic;
+	private bool Is_Device=false;
+	private float[] PDMic_Input;
+	//
 
 	private static PdManager _instance;
 
@@ -35,6 +43,10 @@ public class PdManager : MonoBehaviour {
 			_pdDsp = value;
 			LibPD.ComputeAudio (_pdDsp);
 		}
+	}
+
+	public float[] get_PDMic_Input(){
+		return PDMic_Input;
 	}
 
 	public int openNewPdPatch(string name){
@@ -152,7 +164,7 @@ public class PdManager : MonoBehaviour {
 	}
 		
 
-	/*
+
 	void Start () {
 		
 
@@ -160,11 +172,28 @@ public class PdManager : MonoBehaviour {
 		//---------------these lines will crash, don't use!!!-------------------
 		//if (numberOfOutputChannel != 0) createDac ();
 		//if (numberOfInputChannel != 0) 	createAdc ();
-
+		if (numberOfInputChannel != 0) {
+			foreach (string device in Microphone.devices) {
+				if(Mic_Device==device){
+					Is_Device = true;
+					break;
+				}
+			}
+			if (!Is_Device)
+				Mic = null;
+			Mic = Microphone.Start(Mic_Device, true, 3, sampleRT_Mic);
+			//PDMic_Input=new float[Mic.samples * Mic.channels];
+			PDMic_Input=new float[1024*numberOfInputChannel];
+		}
 
 	}
-	*/
-		
+
+	void Update(){
+		int pos = Microphone.GetPosition (Mic_Device);
+		if (pos - 1024 > 0)
+			pos = pos - 1024+1;
+		Mic.GetData(PDMic_Input,pos);	
+	}		
 
 
 	void OnApplicationQuit(){

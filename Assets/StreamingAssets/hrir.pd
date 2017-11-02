@@ -2,7 +2,7 @@
 #X obj 203 24 hsl 128 15 0 359 0 0 empty empty Azimuth_(o) -2 -8 0
 10 -262144 -1 -1 0 1;
 #X obj 204 84 hsl 128 15 -40 90 0 0 empty empty Elevation_(o) -2 -8
-0 10 -262144 -1 -1 3800 1;
+0 10 -262144 -1 -1 0 1;
 #X obj 202 141 hsl 128 15 20 160 0 0 empty empty Distance_(cm) -2 -8
 0 10 -262144 -1 -1 0 1;
 #X floatatom 199 160 5 0 0 0 - - -;
@@ -33,14 +33,6 @@
 #X obj 234 172 r \$0-Mic;
 #X symbolatom 46 93 10 0 0 0 - - -;
 #X symbolatom 366 186 10 0 0 0 - - -;
-#X obj 193 390 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
-#X obj 236 390 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
-#X floatatom 185 420 5 0 0 0 - - -;
-#X floatatom 252 417 5 0 0 0 - - -;
-#X obj 206 462 s \$0-Mic;
-#X obj 133 348 dac~;
 #X obj 122 162 catch~ in1;
 #X obj 122 181 catch~ in2;
 #X connect 0 0 5 0;
@@ -74,9 +66,5 @@
 #X connect 28 0 26 0;
 #X connect 29 0 22 0;
 #X connect 30 0 20 0;
-#X connect 31 0 33 0;
-#X connect 32 0 34 0;
-#X connect 33 0 35 0;
-#X connect 34 0 35 0;
-#X connect 37 0 27 0;
-#X connect 38 0 27 0;
+#X connect 31 0 27 0;
+#X connect 32 0 27 0;

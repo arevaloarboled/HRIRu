@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using LibPDBinding;
 using System.IO;
+using System;
 
 public class HRIR : MonoBehaviour {
 	private string pdPatchName="hrir.pd";
+	//private string pdPatchName="proof.pd";
 	//public bool playOnAwake = false;
 	public LibPDFloat delCheckPlayingState; 
 	public float scale=1f; //Scale of Cm
@@ -114,10 +116,20 @@ public class HRIR : MonoBehaviour {
 	}
 		
 	void Start(){
-		dollarzero = PdManager.Instance.openNewPdPatch (pdPatchName);
-		LibPD.Subscribe (dollarzero.ToString () + "-isPlaying");
-		delCheckPlayingState = new LibPDFloat(CheckPlayingState);
-		LibPD.Float += delCheckPlayingState;
+		try
+		{
+			dollarzero = PdManager.Instance.openNewPdPatch (pdPatchName);
+		}
+		catch(Exception ex)
+		{
+			// Call a custom error logging procedure.
+			Debug.LogWarning(ex);
+			// Re-throw the error.
+			throw; 
+		}
+		////LibPD.Subscribe (dollarzero.ToString () + "-isPlaying");
+		////delCheckPlayingState = new LibPDFloat(CheckPlayingState);
+		////LibPD.Float += delCheckPlayingState;
 		if(listener==null){
 			//Seek audio listeners in scene
 			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();
@@ -136,8 +148,8 @@ public class HRIR : MonoBehaviour {
 
 
 	void OnDestroy() {
-		LibPD.Float -= delCheckPlayingState;
-		LibPD.Unsubscribe (dollarzero.ToString () + "-isPlaying");
+		////LibPD.Float -= delCheckPlayingState;
+		////LibPD.Unsubscribe (dollarzero.ToString () + "-isPlaying");
 		PdManager.Instance.ClosePdPatch(dollarzero);
 	}
 

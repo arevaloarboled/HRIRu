@@ -8,7 +8,7 @@ public class drone_script : MonoBehaviour {
 	void Start () {
 		hrir_control=this.GetComponent<HRIR>();
 		//hrir_control.Play_Loop("/Prefab/Sounds/DRONE_sound.wav");
-		hrir_control.Mic(true);
+		//hrir_control.Mic(true);
 	}
 	
 	// Update is called once per frame
