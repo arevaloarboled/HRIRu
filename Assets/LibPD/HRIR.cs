@@ -159,17 +159,22 @@ public class HRIR : MonoBehaviour {
 		Update_Distance (Mathf.Abs (Vector3.Distance (listener.transform.position, transform.position)));				
 		//Calculate diretion vector between listener and sound source	
 		Vector3 dir=(transform.position-listener.transform.position).normalized;
+		//Vector3 dir=(listener.transform.position-transform.position).normalized;
 		//Calculate angle of elevation between listener and sound source	
-		float elevation=Vector3.Angle(dir,new Vector3(dir.x,listener.transform.forward.y,dir.z));
-		if(dir.y<0){
+		//float elevation=Vector3.Angle(dir,new Vector3(dir.x,listener.transform.forward.y,dir.z));
+		float elevation=Vector3.Angle(listener.transform.forward,new Vector3(listener.transform.forward.x,dir.y,listener.transform.forward.z));
+		if(dir.y<listener.transform.forward.y){
 			elevation = -elevation;
 		}
 		Update_Elevation (elevation);
 		//Calculate angle of azimuth between listener and sound source
-		float azimuth=Vector3.Angle(dir,new Vector3(listener.transform.forward.x,dir.y,listener.transform.forward.z));
-		if(dir.x>0){
+		//float azimuth=Vector3.Angle(dir,new Vector3(listener.transform.forward.x,dir.y,listener.transform.forward.z));
+		float azimuth=Vector3.Angle(listener.transform.forward,new Vector3(dir.x,listener.transform.forward.y,dir.z));
+		//float azimuth=Vector3.Angle(new Vector3(listener.transform.forward.x,0,listener.transform.forward.z),new Vector3(dir.x,0,dir.z));
+		if(dir.x>listener.transform.forward.x){
 			azimuth = 360 - azimuth;
 		}
 		Update_Azimuth (azimuth);
+		Debug.Log ("azimuth "+azimuth+" elevation "+elevation+" Direction "+dir+" Listener "+listener.transform.forward);
 	}
 }

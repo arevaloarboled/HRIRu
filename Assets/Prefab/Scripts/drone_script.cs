@@ -23,11 +23,17 @@ public class drone_script : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		Vector3 tmp=new Vector3(0,0,0);
-		if (tipe_move == 0) {
-			tmp= new Vector3 (Mathf.Sin (2 * t), Mathf.Cos (2 * t), Mathf.Cos (3 * t));	
-		}
-		if (tipe_move == 1) {
-			tmp= new Vector3 (Mathf.Cos (5 * t), Mathf.Cos (t) + Mathf.Cos (5 * t), Mathf.Sin (3 * t));	
+		switch(tipe_move){
+			case 0:
+				tmp = new Vector3 (Mathf.Cos (t), Mathf.Sin (t), Mathf.Cos (2 * t));
+				break;
+			case 1:
+				tmp = new Vector3 (Mathf.Cos (5 * t), Mathf.Cos (t) + Mathf.Cos (5 * t), Mathf.Sin (3 * t));	
+				break;
+			default:
+				tmp = new Vector3 (Mathf.Sin (2 * t), Mathf.Cos (2 * t), Mathf.Cos (3 * t));	
+				break;
+			
 		}
 		transform.position = tmp * scale;
 		t = t + tp;
