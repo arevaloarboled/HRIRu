@@ -15,8 +15,8 @@ public class PdManager : MonoBehaviour {
 	private bool _pdDsp = true;
 	private List<int> _loadedPatches = new List<int>();
 	private GameObject pdMixer;
-	public string Mic_Device=""; //Microsoft® LifeCam HD-5000
-	public int sampleRT_Mic;
+	public string Mic_Device=""; //Microsoft® LifeCam HD-5000 //Logitech USB Headset
+	public int sampleRT_Mic; //48000
 
 	//
 	private AudioClip Mic;
@@ -173,10 +173,11 @@ public class PdManager : MonoBehaviour {
 		//if (numberOfOutputChannel != 0) createDac ();
 		//if (numberOfInputChannel != 0) 	createAdc ();
 
+		//sample optime 48000
 		if(sampleRT_Mic==null || sampleRT_Mic==0){
-			sampleRT_Mic = 44100; 
+			sampleRT_Mic = 48000; 
 		}
-		if (numberOfInputChannel != 0) {
+		if (numberOfInputChannel > 0) {
 			foreach (string device in Microphone.devices) {
 				if(Mic_Device==device){
 					Is_Device = true;
@@ -193,7 +194,7 @@ public class PdManager : MonoBehaviour {
 	}
 
 	void Update(){
-		if(numberOfInputChannel != 0){
+		if(numberOfInputChannel > 0){
 			int pos = Microphone.GetPosition (Mic_Device);
 			if (pos - 1024 > 0)
 				pos = pos - 1024+1;

@@ -9,11 +9,15 @@ public class drone_script : MonoBehaviour {
 	public float tp=0.5f;
 	private float t=0f;
 	public int tipe_move=0;
+	public bool use_mic=false;
+	public string sound = "";
 	// Use this for initialization
 	void Start () {
 		hrir_control=this.GetComponent<HRIR>();
-		hrir_control.Play_Loop("/Prefab/Sounds/DRONE_sound.wav");
-		//hrir_control.Mic(true);
+		if (use_mic)
+			hrir_control.Mic (true);
+		else
+			hrir_control.Play_Loop("/Prefab/Sounds/"+sound);
 		if(scale<=0f)
 			scale = 5f;
 		if(tp<=0f)
