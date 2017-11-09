@@ -15,6 +15,7 @@ public class HRIR : MonoBehaviour {
 	public int dollarzero = -999;
 	private bool _isPlaying = false;
 	private bool _isNew = true;
+	public bool patch=false;
 	public GameObject listener=null; //Listener object
 
 	public bool isNew{
@@ -116,17 +117,8 @@ public class HRIR : MonoBehaviour {
 	}
 		
 	void Start(){
-		/*try
-		{
-			dollarzero = PdManager.Instance.openNewPdPatch (pdPatchName);
-		}
-		catch(Exception ex)
-		{
-			// Call a custom error logging procedure.
-			Debug.LogWarning(ex);
-			// Re-throw the error.
-			throw; 
-		}*/
+		if (patch)
+			pdPatchName = "hrir2.pd";
 		dollarzero = PdManager.Instance.openNewPdPatch (pdPatchName);
 		////LibPD.Subscribe (dollarzero.ToString () + "-isPlaying");
 		////delCheckPlayingState = new LibPDFloat(CheckPlayingState);

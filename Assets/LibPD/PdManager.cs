@@ -22,6 +22,7 @@ public class PdManager : MonoBehaviour {
 	private AudioClip Mic;
 	private bool Is_Device=false;
 	private float[] PDMic_Input;
+	private int Ni = 0;
 	//
 
 	private static PdManager _instance;
@@ -62,67 +63,6 @@ public class PdManager : MonoBehaviour {
 		LibPD.ClosePatch (dollarzero);
 	}
 
-	public static float FindAzimuth(GameObject player, GameObject other){
-		float azimuth = Mathf.Atan2 ((other.transform.position.z - player.transform.position.z)
-			, (other.transform.position.x - player.transform.position.x)) * Mathf.Rad2Deg;
-		azimuth += (player.transform.rotation.eulerAngles.y+990);
-		azimuth = 360 - (azimuth%360);
-		return azimuth;
-	}
-
-	public static float FindAzimuth(GameObject player, Transform other){
-		float azimuth = Mathf.Atan2 ((other.position.z - player.transform.position.z)
-			, (other.position.x - player.transform.position.x)) * Mathf.Rad2Deg;
-		azimuth += (player.transform.rotation.eulerAngles.y+990);
-		azimuth = 360 - (azimuth%360);
-		return azimuth;
-	}
-
-	public static float FindDistance(GameObject player, GameObject other){
-		return Mathf.Abs(Vector3.Distance (player.transform.position, other.transform.position));
-	}
-
-	public static float FindDistance(GameObject player, Transform other){
-		return Mathf.Abs(Vector3.Distance (player.transform.position, other.position));
-	}
-		
-	/*
-	private void createDac(){
-		object[] dacArgs = new object[3 + numberOfOutputChannel];
-		dacArgs [0] = "0";
-		dacArgs [1] = "0";
-		dacArgs [2] = "dac~";
-		for (int i = 0; i < numberOfOutputChannel; i++) {
-			//create catch~ for each inlet
-			LibPD.SendMessage ("pdManager.setManager", "obj", new object[]{"catch~","out"+(i+1).ToString()});
-			//dac Arguments
-			dacArgs [i + 3] = (i + 1).ToString ();
-		}
-		LibPD.SendMessage ("pdManager.setManager", "obj", dacArgs);
-
-		for (int i = 0; i < numberOfOutputChannel; i++) {
-			LibPD.SendMessage ("pdManager.setManager", "connect", new object[]{i.ToString(),"0",numberOfOutputChannel.ToString(),i.ToString()});
-		}
-	}
-
-	private void createAdc(){
-		object[] adcArgs = new object[3 + numberOfInputChannel];
-		adcArgs [0] = "0";
-		adcArgs [1] = "0";
-		adcArgs [2] = "adc~";
-		for (int i = 0; i < numberOfOutputChannel; i++) {
-			//create throw for each outlet
-			LibPD.SendMessage ("pdManager.setManager", "obj", new object[]{"throw~","in"+(i+1).ToString()});
-			adcArgs [i + 3] = (i + 1).ToString ();
-		}
-		LibPD.SendMessage ("pdManager.setManager", "obj", adcArgs);
-		for (int i = 0; i < numberOfOutputChannel; i++) {
-			LibPD.SendMessage ("pdManager.setManager", "connect", 
-				new object[]{(numberOfInputChannel+numberOfOutputChannel+1).ToString(),i.ToString(),
-					(i+numberOfOutputChannel+1).ToString(),"0"});
-		}
-	}
-*/
 	private void createPdMixer(){
 		pdMixer = new GameObject ("PdMixer");
 		for(int i=0;i<numberOfOutputChannel/2;++i){
@@ -163,17 +103,10 @@ public class PdManager : MonoBehaviour {
 		}
 	}
 		
-
-
-	void Start () {
-		
-
-
-		//---------------these lines will crash, don't use!!!-------------------
-		//if (numberOfOutputChannel != 0) createDac ();
-		//if (numberOfInputChannel != 0) 	createAdc ();
-
-		//sample optime 48000
+	void Avaible_Mic(){
+		if(numberOfInputChannel<=0){
+			numberOfInputChannel = Ni;
+		}
 		if(sampleRT_Mic==null || sampleRT_Mic==0){
 			sampleRT_Mic = 48000; 
 		}
@@ -190,7 +123,24 @@ public class PdManager : MonoBehaviour {
 			//PDMic_Input=new float[Mic.samples * Mic.channels];
 			PDMic_Input=new float[1024*numberOfInputChannel];
 		}
+	}
 
+	void Disable_Mic(){
+		Microphone.End (Mic_Device);
+		Ni = numberOfInputChannel;
+		numberOfInputChannel = 0;
+	}
+
+	void Start () {
+		
+
+
+		//---------------these lines will crash, don't use!!!-------------------
+		//if (numberOfOutputChannel != 0) createDac ();
+		//if (numberOfInputChannel != 0) 	createAdc ();
+
+		//sample optime 48000
+		Avaible_Mic();
 	}
 
 	void Update(){
