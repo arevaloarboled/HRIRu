@@ -131,6 +131,16 @@ public class PdManager : MonoBehaviour {
 		numberOfInputChannel = 0;
 	}
 
+	public float [] Get_Audio_Mic(){
+		if(numberOfInputChannel > 0){
+			int pos = Microphone.GetPosition (Mic_Device);
+			if (pos - 1024 > 0)
+				pos = pos - 1024+1;
+			Mic.GetData(PDMic_Input,pos);	
+		}
+		return PDMic_Input;
+	}
+
 	void Start () {
 		
 
@@ -144,12 +154,7 @@ public class PdManager : MonoBehaviour {
 	}
 
 	void Update(){
-		if(numberOfInputChannel > 0){
-			int pos = Microphone.GetPosition (Mic_Device);
-			if (pos - 1024 > 0)
-				pos = pos - 1024+1;
-			Mic.GetData(PDMic_Input,pos);	
-		}
+		
 	}		
 
 
