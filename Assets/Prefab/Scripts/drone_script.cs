@@ -11,17 +11,20 @@ public class drone_script : MonoBehaviour {
 	public int tipe_move=0;
 	public bool use_mic=false;
 	public string sound = "";
+	public bool with_hrir=true;
 	// Use this for initialization
 	void Start () {
-		hrir_control=this.GetComponent<HRIR>();
-		if (use_mic)
-			hrir_control.Mic (true);
-		else
-			hrir_control.Play_Loop("/Prefab/Sounds/"+sound);
-		if(scale<=0f)
-			scale = 5f;
-		if(tp<=0f)
-			tp = 0.5f;
+		if(with_hrir){
+			hrir_control=this.GetComponent<HRIR>();
+			if (use_mic)
+				hrir_control.Mic (true);
+			else
+				hrir_control.Play_Loop("/Prefab/Sounds/"+sound);
+			if(scale<=0f)
+				scale = 5f;
+			if(tp<=0f)
+				tp = 0.5f;	
+		}
 	}
 	
 	// Update is called once per frame
