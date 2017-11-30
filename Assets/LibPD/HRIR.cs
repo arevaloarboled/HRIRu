@@ -6,7 +6,7 @@ using System.IO;
 using System;
 
 public class HRIR : MonoBehaviour {
-	private string pdPatchName="hrir.pd";
+	private string pdPatchName="proof0.pd";
 	//private string pdPatchName="proof.pd";
 	//public bool playOnAwake = false;
 	public LibPDFloat delCheckPlayingState; 

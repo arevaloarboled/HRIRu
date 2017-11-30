@@ -62,10 +62,16 @@ namespace LibPDBinding
 		//only call this once
 		static LibPD()
 		{
-			ReInit();
+			//ReInit();
+			Init();
 		}
-		
+			
 		#region Environment
+
+		public static void Init(){ 
+			SetupHooks ();
+			libpd_init ();
+		}
 		
 		/// <summary>
 		/// You almost never have to call this! The only case is when the pdcsharp 
@@ -77,8 +83,9 @@ namespace LibPDBinding
 		public static void ReInit()
 		{
 			Release();
-			SetupHooks();
-			libpd_init();
+			/*SetupHooks();
+			libpd_init();*/
+			Init (); 
 		}
 		
 		//store open patches

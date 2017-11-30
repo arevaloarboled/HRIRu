@@ -84,7 +84,8 @@ public class PdManager : MonoBehaviour {
 		if (_instance == null) {
 			_instance = this;
 			DontDestroyOnLoad (gameObject);
-			LibPD.ReInit();
+			//LibPD.ReInit();
+			LibPD.Init();
 			LibPD.OpenAudio(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate);
 			//
 			LibPD.ClearSearchPath();
