@@ -5,9 +5,9 @@
 0 10 -262144 -1 -1 0 1;
 #X obj 202 141 hsl 128 15 20 160 0 0 empty empty Distance_(cm) -2 -8
 0 10 -262144 -1 -1 0 1;
-#X floatatom 199 160 5 0 0 0 - - -, f 5;
-#X floatatom 201 102 5 0 0 0 - - -, f 5;
-#X floatatom 200 43 5 0 0 0 - - -, f 5;
+#X floatatom 199 160 5 0 0 0 - - -;
+#X floatatom 201 102 5 0 0 0 - - -;
+#X floatatom 200 43 5 0 0 0 - - -;
 #X obj 340 55 r \$0-E;
 #X obj 347 111 r \$0-D;
 #X obj 337 1 r \$0-A;
@@ -25,11 +25,11 @@
 #X msg 46 114 makefile \$1;
 #X obj 464 169 r \$0-Stop;
 #X obj 131 62 r \$0-Stop;
-#X floatatom 234 197 5 0 0 0 - - -, f 5;
+#X floatatom 234 197 5 0 0 0 - - -;
 #X obj 122 213 *~;
 #X obj 234 172 r \$0-Mic;
-#X symbolatom 46 93 10 0 0 0 - - -, f 10;
-#X symbolatom 366 186 10 0 0 0 - - -, f 10;
+#X symbolatom 46 93 10 0 0 0 - - -;
+#X symbolatom 366 186 10 0 0 0 - - -;
 #X obj 26 229 noise~;
 #X obj 122 162 r~ in1;
 #X obj 122 181 r~ in2;

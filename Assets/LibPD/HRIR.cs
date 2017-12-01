@@ -6,7 +6,7 @@ using System.IO;
 using System;
 
 public class HRIR : MonoBehaviour {
-	private string pdPatchName="proof0.pd";
+	private string pdPatchName="hrir.pd";
 	//private string pdPatchName="proof.pd";
 	//public bool playOnAwake = false;
 	public LibPDFloat delCheckPlayingState; 
@@ -35,78 +35,77 @@ public class HRIR : MonoBehaviour {
 			_isPlaying = value;
 		}
 	}
-
-	/*
-	Function to load route of files .WAV in patch HRIR
-	Parameters: msg is the path song from the assets folder
-	Returns true if path is load successfully
-	*/
-	public bool Load_Audio(string msg,params object[] args){
-		string[] splt = msg.Split ('.');
-		if(!File.Exists(Application.dataPath+msg) || splt[splt.Length-1]!="wav" )
+	/// <summary>
+	/// Function to load route of files .WAV in patch HRIR
+	/// </summary>
+	/// <param name="song">Is the path song from the assets folder</param>
+	/// <returns> Returns true if path is load successfully </returns>
+	public bool Load_Audio(string song,params object[] args){
+		string[] splt = song.Split ('.');
+		if(!File.Exists(Application.dataPath+song) || splt[splt.Length-1]!="wav" )
 		{
 			Debug.LogWarning ("Error, Can't load file, it's not wav or file not exist");
 			return false;
 		}
-		int answer=LibPD.SendSymbol(dollarzero.ToString ()+"-Load",Application.dataPath+msg);
+		int answer=LibPD.SendSymbol(dollarzero.ToString ()+"-Load",Application.dataPath+song);
 		if (answer == 0)
 			return true;
 		else
 			return false;
 	}
-	/*
-	Function to reproduce song just once in HRIR
-	Parameters: msg is the path song from the assets folder
-	*/
-	public void Play(string msg,params object[] args){
-		if(!Load_Audio(msg)){
+	/// <summary>
+	/// Function to reproduce song just once in HRIR
+	/// </summary>
+	/// <param name="song">Is the path song from the assets folder</param>
+	public void Play(string song,params object[] args){
+		if(!Load_Audio(song)){
 			return;
 		}
 		LibPD.SendBang(dollarzero.ToString ()+"-Play");
 	}
-	/*
-	Function to reproduce song in bucle 
-	Parameters: msg is the path song from the assets folder
-	*/
-	public void Play_Loop(string msg,params object[] args){
-		if(!Load_Audio(msg)){
+	/// <summary>
+	/// Function to reproduce song in bucle 
+	/// </summary>
+	/// <param name="song">Is the path song from the assets folder</param>
+	public void Play_Loop(string song,params object[] args){
+		if(!Load_Audio(song)){
 			return;
 		}
 		LibPD.SendBang(dollarzero.ToString ()+"-Play_Loop");
 	}
-	/*
-	Function to stop song plays
-	*/
+	/// <summary>
+	/// Function to stop song plays
+	/// </summary>
 	public void Stop(){
 		LibPD.SendBang(dollarzero.ToString ()+"-Stop");
 	}
-	/*
-	Function to set available or unavailable the default microphone 
-	Parameters: variable bool available
-	*/
+	/// <summary>
+	/// Function to set available or unavailable the default microphone 
+	/// </summary>
+	/// <param name="available">Variable bool available</param>
 	public void Mic (bool available){
 		if (available) LibPD.SendFloat (dollarzero.ToString () + "-Mic", 1f); 
 		else LibPD.SendFloat (dollarzero.ToString () + "-Mic", 0f);	
 	}
-	/*
-	Function to update azimuth in HRIR
-	Parameters: f is a angle of azimuth
-	*/
-	public void Update_Azimuth (float f){
+	/// <summary>
+	/// Function to update azimuth in HRIR
+	/// </summary>
+	/// <param name="f">Is a angle of azimuth</param>
+	private void Update_Azimuth (float f){
 		LibPD.SendFloat (dollarzero.ToString () + "-A", f);	
 	}
-	/*
-	Function to update elevation in HRIR
-	Parameters: f is a angle of elevation
-	*/
-	public void Update_Elevation (float f){
+	/// <summary>
+	/// Function to update elevation in HRIR
+	/// </summary>
+	/// <param name="f">Is a angle of elevation</param>
+	private void Update_Elevation (float f){
 		LibPD.SendFloat (dollarzero.ToString ()+"-E", f);
 	}
-	/*
-	Function to update distance in HRIR
-	Parameters: f is a angle of azimuth
-	*/
-	public void Update_Distance (float f){
+	/// <summary>
+	/// Function to update distance in HRIR
+	/// </summary>
+	/// <param name="f">Is a angle of distance</param>
+	private void Update_Distance (float f){
 		LibPD.SendFloat (dollarzero.ToString ()+"-D", f*scale);
 	}
 

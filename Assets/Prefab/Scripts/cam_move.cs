@@ -43,8 +43,6 @@ public class cam_move : MonoBehaviour {
 			isRotating = true;
 		}
 
-
-
 		// Disable movements on button release
 		if (!Input.GetMouseButton(0)) isRotating=false;
 
