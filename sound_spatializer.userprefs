@@ -1,27 +1,20 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-<<<<<<< HEAD
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Prefab/Scripts/drone_script.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/LibPD/libpd_csharp/Managed/Binding.cs">
     <Files>
-      <File FileName="Assets/LibPD/PdManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/LibPD/PdManager.cs" Line="111" Column="6" />
       <File FileName="Assets/LibPD/HRIR.cs" Line="1" Column="1" />
-      <File FileName="Assets/Prefab/Scripts/drone_script.cs" Line="35" Column="24" />
-=======
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Prefab/Scripts/cam_move.cs">
-    <Files>
-      <File FileName="Assets/LibPD/PdManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/LibPD/HRIR.cs" Line="1" Column="1" />
-      <File FileName="Assets/Prefab/Scripts/drone_script.cs" Line="26" Column="15" />
->>>>>>> origin
-      <File FileName="Assets/LibPD/LibPDNativeMessaging.cs" Line="1" Column="1" />
-      <File FileName="Assets/LibPD/LibPDNativeMethods.cs" Line="1" Column="1" />
+      <File FileName="Assets/Prefab/Scripts/drone_script.cs" Line="1" Column="1" />
       <File FileName="Assets/LibPD/PdStereo.cs" Line="1" Column="1" />
       <File FileName="Assets/LibPD/PdAudioSource.cs" Line="1" Column="1" />
-<<<<<<< HEAD
       <File FileName="Assets/Prefab/Scripts/cam_move.cs" Line="1" Column="1" />
-=======
-      <File FileName="Assets/Prefab/Scripts/cam_move.cs" Line="7" Column="94" />
->>>>>>> origin
+      <File FileName="Assets/LibPD/libpd_csharp/Managed/Binding.cs" Line="29" Column="21" />
+      <File FileName="Assets/LibPD/libpd_csharp/LibPDNativeMethods.cs" Line="180" Column="19" />
+      <File FileName="Assets/LibPD/libpd_csharp/Managed/Pd.cs" Line="29" Column="10" />
+      <File FileName="Assets/LibPD/libpd_csharp/Native/Messaging.cs" Line="6" Column="24" />
+      <File FileName="Assets/LibPD/libpd_csharp/Managed/Patch.cs" Line="9" Column="28" />
+      <File FileName="Assets/LibPD/libpd_csharp/LibPDNativeMessaging.cs" Line="218" Column="3" />
+      <File FileName="Assets/LibPD/libpd_csharp/Native/General.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
