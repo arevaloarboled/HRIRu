@@ -1,4 +1,4 @@
-﻿//
+//
 // Messaging.cs
 //
 // Author:

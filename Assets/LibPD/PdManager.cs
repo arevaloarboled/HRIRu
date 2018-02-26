@@ -11,9 +11,6 @@ public class PdManager : MonoBehaviour {
 	public int numberOfInputChannel = 0;
 	public int numberOfOutputChannel = 2;
 	public AudioMixerGroup[] targetMixerGroups;
-	public bool startDspOnStart = false;
-	private bool _pdDsp = true;
-	private List<int> _loadedPatches = new List<int>();
 	private GameObject pdMixer;
 	public string Mic_Device=""; //Microsoft® LifeCam HD-5000 //Logitech USB Headset
 	public int sampleRT_Mic; //48000
@@ -35,32 +32,8 @@ public class PdManager : MonoBehaviour {
 		}
 	}
 
-
-	public bool PdDSP{
-		get{
-			return _pdDsp;
-		}
-		set{
-			_pdDsp = value;
-			LibPD.ComputeAudio (_pdDsp);
-		}
-	}
-
 	public float[] get_PDMic_Input(){
 		return PDMic_Input;
-	}
-
-	public int openNewPdPatch(string name){
-		int dollarzero = LibPD.OpenPatch (Application.dataPath +
-			Path.DirectorySeparatorChar.ToString () + "StreamingAssets" +
-		                 Path.DirectorySeparatorChar.ToString () + name);
-		_loadedPatches.Add(dollarzero);
-		return dollarzero;
-	}
-
-	public void ClosePdPatch(int dollarzero){
-		_loadedPatches.Remove(dollarzero);
-		LibPD.ClosePatch (dollarzero);
 	}
 
 	private void createPdMixer(){
@@ -84,21 +57,12 @@ public class PdManager : MonoBehaviour {
 		if (_instance == null) {
 			_instance = this;
 			DontDestroyOnLoad (gameObject);
-			//LibPD.ReInit();
-			LibPD.Init();
-			LibPD.OpenAudio(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate);
-			//
-			LibPD.ClearSearchPath();
-			//
-			LibPD.AddToSearchPath (Application.dataPath+ Path.DirectorySeparatorChar.ToString ()+"StreamingAssets");
-			openNewPdPatch ("pdManager.pd");
 			if (numberOfOutputChannel != targetMixerGroups.Length * 2) {
 				Debug.LogWarning ("The number of output channel is not equal to the number of mixer group!");
 				Debug.LogWarning ("Set number of output channel to " + (targetMixerGroups.Length * 2).ToString ());
 				numberOfOutputChannel = targetMixerGroups.Length * 2;
 			}
 			createPdMixer ();
-			if(startDspOnStart) LibPD.ComputeAudio (true);
 		} else if (!Instance.Equals((object)this)){
 			Destroy (gameObject);
 		}
@@ -122,7 +86,7 @@ public class PdManager : MonoBehaviour {
 				Mic = null;
 			Mic = Microphone.Start(Mic_Device, true, 3, sampleRT_Mic);
 			//PDMic_Input=new float[Mic.samples * Mic.channels];
-			PDMic_Input=new float[1024*numberOfInputChannel];
+			PDMic_Input=new float[AudioSettings.outputSampleRate*numberOfInputChannel];
 		}
 	}
 
@@ -143,31 +107,12 @@ public class PdManager : MonoBehaviour {
 	}
 
 	void Start () {
-		
-
-
-		//---------------these lines will crash, don't use!!!-------------------
-		//if (numberOfOutputChannel != 0) createDac ();
-		//if (numberOfInputChannel != 0) 	createAdc ();
-
-		//sample optime 48000
+		//sample optimum 48000
 		Avaible_Mic();
 	}
 
 	void Update(){
 		
 	}		
-
-
-	void OnApplicationQuit(){
-		//LibPD.SendMessage ("pdManager.makeAbstraction", "clear");
-		//Debug.Log("holi, voy para afuera: "+ _loadedPatches.Count.ToString());
-		LibPD.ComputeAudio (false);
-		foreach (int patch in _loadedPatches){
-			LibPD.ClosePatch (patch);
-			//LibPD.Unsubscribe (patch.ToString () + "-isPlaying");
-		}
-		//LibPD.ClearSearchPath();
-		LibPD.Release();
-	}
+		
 }

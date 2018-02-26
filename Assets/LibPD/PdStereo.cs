@@ -40,8 +40,12 @@ public class PdStereo : MonoBehaviour {
 				PdOutput = new float[(int)(data.Length / channels * PdManager.Instance.numberOfOutputChannel)];
 			else
 				PdOutput = new float[0];
-			//Debug.Log (PTest);
-			LibPD.Process ((int)(data.Length / LibPD.BlockSize / channels), PdInput, PdOutput);
+			HRIR[] hrir_list = UnityEngine.Object.FindObjectsOfType<HRIR>();
+			float[] mixed=new float[0];
+			foreach(HRIR sound_source in hrir_list){
+				mixed = sound_source.Process_Audio (data,channels,PdInput);
+
+			}
 		}
 
 		if (PdManager.Instance != null) {

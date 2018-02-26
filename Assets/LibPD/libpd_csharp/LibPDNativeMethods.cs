@@ -67,7 +67,7 @@ namespace LibPDBinding
 
 		#region Environment
 
-		public static void Init ()
+		static void Init ()
 		{
 			SetupHooks ();
 			General.libpd_init ();

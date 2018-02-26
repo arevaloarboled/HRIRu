@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using LibPDBinding.Managed.Data;
 
 namespace LibPDBinding.Managed.Events

@@ -2,39 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using LibPDBinding;
+using LibPDBinding.Managed;
 using System.IO;
 using System;
 
 public class HRIR : MonoBehaviour {
 	private string pdPatchName="hrir.pd";
-	//private string pdPatchName="proof.pd";
-	//public bool playOnAwake = false;
-	public LibPDFloat delCheckPlayingState; 
 	public float scale=1f; //Scale of Cm
-	//public LibPDBang delSelfDestroy;
-	public int dollarzero = -999;
-	private bool _isPlaying = false;
-	private bool _isNew = true;
-	public bool patch=false;
+	public Patch patch = -999;
+	private Pd PD=null;
 	public GameObject listener=null; //Listener object
 
-	public bool isNew{
-		get{
-			return _isNew;
-		}
-		set{
-			_isNew = value;
-		}
-	}
-
-	public bool isPlaying{
-		get{
-			return _isPlaying;
-		}
-		set{
-			_isPlaying = value;
-		}
-	}
 	/// <summary>
 	/// Function to load route of files .WAV in patch HRIR
 	/// </summary>
@@ -47,7 +25,7 @@ public class HRIR : MonoBehaviour {
 			Debug.LogWarning ("Error, Can't load file, it's not wav or file not exist");
 			return false;
 		}
-		int answer=LibPD.SendSymbol(dollarzero.ToString ()+"-Load",Application.dataPath+song);
+		int answer=LibPD.SendSymbol(patch.DollarZero.ToString ()+"-Load",Application.dataPath+song);
 		if (answer == 0)
 			return true;
 		else
@@ -61,7 +39,7 @@ public class HRIR : MonoBehaviour {
 		if(!Load_Audio(song)){
 			return;
 		}
-		LibPD.SendBang(dollarzero.ToString ()+"-Play");
+		LibPD.SendBang(patch.DollarZero.ToString ()+"-Play");
 	}
 	/// <summary>
 	/// Function to reproduce song in bucle 
@@ -71,57 +49,55 @@ public class HRIR : MonoBehaviour {
 		if(!Load_Audio(song)){
 			return;
 		}
-		LibPD.SendBang(dollarzero.ToString ()+"-Play_Loop");
+		LibPD.SendBang(patch.DollarZero.ToString ()+"-Play_Loop");
 	}
 	/// <summary>
 	/// Function to stop song plays
 	/// </summary>
 	public void Stop(){
-		LibPD.SendBang(dollarzero.ToString ()+"-Stop");
+		LibPD.SendBang(patch.DollarZero.ToString ()+"-Stop");
 	}
 	/// <summary>
 	/// Function to set available or unavailable the default microphone 
 	/// </summary>
 	/// <param name="available">Variable bool available</param>
 	public void Mic (bool available){
-		if (available) LibPD.SendFloat (dollarzero.ToString () + "-Mic", 1f); 
-		else LibPD.SendFloat (dollarzero.ToString () + "-Mic", 0f);	
+		if (available) LibPD.SendFloat (patch.DollarZero.ToString () + "-Mic", 1f); 
+		else LibPD.SendFloat (patch.DollarZero.ToString () + "-Mic", 0f);	
 	}
 	/// <summary>
 	/// Function to update azimuth in HRIR
 	/// </summary>
 	/// <param name="f">Is a angle of azimuth</param>
 	private void Update_Azimuth (float f){
-		LibPD.SendFloat (dollarzero.ToString () + "-A", f);	
+		LibPD.SendFloat (patch.DollarZero.ToString () + "-A", f);	
 	}
 	/// <summary>
 	/// Function to update elevation in HRIR
 	/// </summary>
 	/// <param name="f">Is a angle of elevation</param>
 	private void Update_Elevation (float f){
-		LibPD.SendFloat (dollarzero.ToString ()+"-E", f);
+		LibPD.SendFloat (patch.DollarZero.ToString ()+"-E", f);
 	}
 	/// <summary>
 	/// Function to update distance in HRIR
 	/// </summary>
 	/// <param name="f">Is a angle of distance</param>
 	private void Update_Distance (float f){
-		LibPD.SendFloat (dollarzero.ToString ()+"-D", f*scale);
+		LibPD.SendFloat (patch.DollarZero.ToString ()+"-D", f*scale);
 	}
 
-	public void CheckPlayingState(string recv, float value){
-		if (recv.CompareTo (dollarzero.ToString () + "-isPlaying") == 1) {
-			_isPlaying = value==1?true:false;
-		}
+	public float[] Process_Audio(float[] data,int channels,float[] input){
+		float[] output;
+		PD.Start ();
+		PD.Process ((int)(data.Length / LibPD.BlockSize / channels), input, output);
+		PD.Stop();
+		return output;
 	}
 		
 	void Start(){
-		if (patch)
-			pdPatchName = "hrir2.pd";
-		dollarzero = PdManager.Instance.openNewPdPatch (pdPatchName);
-		////LibPD.Subscribe (dollarzero.ToString () + "-isPlaying");
-		////delCheckPlayingState = new LibPDFloat(CheckPlayingState);
-		////LibPD.Float += delCheckPlayingState;
+		PD = new Pd (PdManager.Instance.numberOfInputChannel, PdManager.Instance.numberOfOutputChannel, AudioSettings.outputSampleRate, Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets");
+		patch = PD.LoadPatch (pdPatchName);
 		if(listener==null){
 			//Seek audio listeners in scene
 			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();
@@ -134,15 +110,12 @@ public class HRIR : MonoBehaviour {
 				listener = listeners[0].gameObject;
 			}
 		}
-		/*if (playOnAwake)
-			Play ();*/
 	}
 
 
 	void OnDestroy() {
-		////LibPD.Float -= delCheckPlayingState;
-		////LibPD.Unsubscribe (dollarzero.ToString () + "-isPlaying");
-		PdManager.Instance.ClosePdPatch(dollarzero);
+		patch.Dispose();
+		PD.Dispose();
 	}
 
 	// Update is called once per frame
