@@ -13,13 +13,13 @@ public class PdManager : MonoBehaviour {
 	public AudioMixerGroup[] targetMixerGroups;
 	private GameObject pdMixer;
 	public string Mic_Device=""; //Microsoft® LifeCam HD-5000 //Logitech USB Headset
-	public int sampleRT_Mic; //48000
+	private HRIR[] sound_sources;
 
 	//
 	private AudioClip Mic;
 	private bool Is_Device=false;
 	private float[] PDMic_Input;
-	private int Ni = 0;
+	private int Temp_InputChannels = 0;
 	//
 
 	private static PdManager _instance;
@@ -69,11 +69,9 @@ public class PdManager : MonoBehaviour {
 	}
 		
 	void Avaible_Mic(){
+		Is_Device = false;
 		if(numberOfInputChannel<=0){
-			numberOfInputChannel = Ni;
-		}
-		if(sampleRT_Mic==null || sampleRT_Mic==0){
-			sampleRT_Mic = 48000; 
+			numberOfInputChannel = Temp_InputChannels;
 		}
 		if (numberOfInputChannel > 0) {
 			foreach (string device in Microphone.devices) {
@@ -84,15 +82,15 @@ public class PdManager : MonoBehaviour {
 			}
 			if (!Is_Device)
 				Mic = null;
-			Mic = Microphone.Start(Mic_Device, true, 3, sampleRT_Mic);
+			Mic = Microphone.Start(Mic_Device, true, 3, AudioSettings.outputSampleRate);
 			//PDMic_Input=new float[Mic.samples * Mic.channels];
 			PDMic_Input=new float[AudioSettings.outputSampleRate*numberOfInputChannel];
 		}
 	}
 
-	void Disable_Mic(){
+	public void Disable_Mic(){
 		Microphone.End (Mic_Device);
-		Ni = numberOfInputChannel;
+		Temp_InputChannels = numberOfInputChannel;
 		numberOfInputChannel = 0;
 	}
 
@@ -106,13 +104,17 @@ public class PdManager : MonoBehaviour {
 		return PDMic_Input;
 	}
 
+	public HRIR[] Get_SoundSources(){
+		return sound_sources;
+	}
+
 	void Start () {
 		//sample optimum 48000
 		Avaible_Mic();
 	}
 
-	void Update(){
-		
+	void Update(){	
+		sound_sources = UnityEngine.Object.FindObjectsOfType<HRIR> ();	
 	}		
 		
 }

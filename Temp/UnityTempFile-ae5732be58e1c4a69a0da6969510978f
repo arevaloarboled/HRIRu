@@ -131,6 +131,7 @@
 'Assets/LibPD/libpd_csharp/Native/General.cs'
 'Assets/LibPD/libpd_csharp/Native/Messaging.cs'
 'Assets/LibPD/libpd_csharp/Native/Midi.cs'
+'Assets/LibPD/libpd_csharp/Native/MultiInstance.cs'
 'Assets/LibPD/libpd_csharp/Properties/AssemblyInfo.cs'
 'Assets/LibPD/PdManager.cs'
 'Assets/LibPD/PdStereo.cs'

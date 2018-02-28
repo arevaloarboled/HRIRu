@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using LibPDBinding;
 using LibPDBinding.Managed;
+using LibPDBinding.Managed.Data;
 using System.IO;
 using System;
 
 public class HRIR : MonoBehaviour {
 	private string pdPatchName="hrir.pd";
 	public float scale=1f; //Scale of Cm
-	public Patch patch = -999;
-	private Pd PD=null;
+	private Patch patch;
+	private Pd PD;
 	public GameObject listener=null; //Listener object
 
 	/// <summary>
@@ -25,11 +26,8 @@ public class HRIR : MonoBehaviour {
 			Debug.LogWarning ("Error, Can't load file, it's not wav or file not exist");
 			return false;
 		}
-		int answer=LibPD.SendSymbol(patch.DollarZero.ToString ()+"-Load",Application.dataPath+song);
-		if (answer == 0)
-			return true;
-		else
-			return false;
+		PD.Messaging.Send(patch.DollarZero.ToString ()+"-Load",new Symbol(Application.dataPath+song));
+		return true;
 	}
 	/// <summary>
 	/// Function to reproduce song just once in HRIR
@@ -39,7 +37,7 @@ public class HRIR : MonoBehaviour {
 		if(!Load_Audio(song)){
 			return;
 		}
-		LibPD.SendBang(patch.DollarZero.ToString ()+"-Play");
+		PD.Messaging.Send(patch.DollarZero.ToString ()+"-Play",new Bang());
 	}
 	/// <summary>
 	/// Function to reproduce song in bucle 
@@ -49,13 +47,13 @@ public class HRIR : MonoBehaviour {
 		if(!Load_Audio(song)){
 			return;
 		}
-		LibPD.SendBang(patch.DollarZero.ToString ()+"-Play_Loop");
+		PD.Messaging.Send(patch.DollarZero.ToString ()+"-Play_Loop",new Bang());
 	}
 	/// <summary>
 	/// Function to stop song plays
 	/// </summary>
 	public void Stop(){
-		LibPD.SendBang(patch.DollarZero.ToString ()+"-Stop");
+		PD.Messaging.Send(patch.DollarZero.ToString ()+"-Stop",new Bang());
 	}
 	/// <summary>
 	/// Function to set available or unavailable the default microphone 
@@ -63,41 +61,41 @@ public class HRIR : MonoBehaviour {
 	/// <param name="available">Variable bool available</param>
 	public void Mic (bool available){
 		if (available) LibPD.SendFloat (patch.DollarZero.ToString () + "-Mic", 1f); 
-		else LibPD.SendFloat (patch.DollarZero.ToString () + "-Mic", 0f);	
+		else PD.Messaging.Send(patch.DollarZero.ToString () + "-Mic", new Float(0f));	
 	}
 	/// <summary>
 	/// Function to update azimuth in HRIR
 	/// </summary>
 	/// <param name="f">Is a angle of azimuth</param>
 	private void Update_Azimuth (float f){
-		LibPD.SendFloat (patch.DollarZero.ToString () + "-A", f);	
+		PD.Messaging.Send(patch.DollarZero.ToString () + "-A", new Float(f));
 	}
 	/// <summary>
 	/// Function to update elevation in HRIR
 	/// </summary>
 	/// <param name="f">Is a angle of elevation</param>
 	private void Update_Elevation (float f){
-		LibPD.SendFloat (patch.DollarZero.ToString ()+"-E", f);
+		PD.Messaging.Send(patch.DollarZero.ToString ()+"-E", new Float(f));
 	}
 	/// <summary>
 	/// Function to update distance in HRIR
 	/// </summary>
 	/// <param name="f">Is a angle of distance</param>
 	private void Update_Distance (float f){
-		LibPD.SendFloat (patch.DollarZero.ToString ()+"-D", f*scale);
+		PD.Messaging.Send(patch.DollarZero.ToString ()+"-D",new Float(f*scale));
 	}
 
 	public float[] Process_Audio(float[] data,int channels,float[] input){
-		float[] output;
+		float[] output=new float[16384];
 		PD.Start ();
-		PD.Process ((int)(data.Length / LibPD.BlockSize / channels), input, output);
+		PD.Process ((int)(data.Length / PD.BlockSize / channels), input, output);
 		PD.Stop();
 		return output;
 	}
 		
-	void Start(){
-		PD = new Pd (PdManager.Instance.numberOfInputChannel, PdManager.Instance.numberOfOutputChannel, AudioSettings.outputSampleRate, Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets");
-		patch = PD.LoadPatch (pdPatchName);
+	void Start(){		
+		PD = new Pd (PdManager.Instance.numberOfInputChannel, PdManager.Instance.numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets"});
+		patch = PD.LoadPatch (Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets" +	Path.DirectorySeparatorChar.ToString () + pdPatchName);
 		if(listener==null){
 			//Seek audio listeners in scene
 			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();

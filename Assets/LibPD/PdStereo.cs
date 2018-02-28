@@ -9,9 +9,13 @@ public class PdStereo : MonoBehaviour {
 	public bool pullDataFromPd = false;
 	public static float[] PdInput = new float[16384];
 	public static float[] PdOutput = new float[16384];
+	private float[] ToMixing=new float[0];
+	private HRIR[] hrir_list;
+	private bool first;
 	public void setMixerGroup(AudioMixerGroup group){
 		GetComponent<AudioSource> ().outputAudioMixerGroup = group;
 	}
+
 	// Use this for initialization
 	void Start () {
 		if (!GetComponent<AudioSource> ()) {
@@ -39,12 +43,19 @@ public class PdStereo : MonoBehaviour {
 			if (PdManager.Instance.numberOfOutputChannel != 0)
 				PdOutput = new float[(int)(data.Length / channels * PdManager.Instance.numberOfOutputChannel)];
 			else
-				PdOutput = new float[0];
-			HRIR[] hrir_list = UnityEngine.Object.FindObjectsOfType<HRIR>();
-			float[] mixed=new float[0];
-			foreach(HRIR sound_source in hrir_list){
-				mixed = sound_source.Process_Audio (data,channels,PdInput);
-
+				PdOutput = new float[0];			
+			first = true;
+			hrir_list=PdManager.Instance.Get_SoundSources ();
+			foreach (HRIR sound_source in hrir_list) {
+				ToMixing = sound_source.Process_Audio (data, channels, PdInput);
+				if (first) {
+					PdOutput = ToMixing;
+					first = false;
+				} else{
+					for(int i=0;i<PdOutput.Length;i++){						
+						PdOutput[i] = ToMixing[i] + PdOutput[i] - (ToMixing[i] * PdOutput[i]);	
+					}
+				}
 			}
 		}
 
