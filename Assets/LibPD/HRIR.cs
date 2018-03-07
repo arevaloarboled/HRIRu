@@ -4,6 +4,7 @@ using UnityEngine;
 using LibPDBinding;
 using LibPDBinding.Managed;
 using LibPDBinding.Managed.Data;
+using LibPDBinding.Managed.Events;
 using System.IO;
 using System;
 
@@ -85,16 +86,20 @@ public class HRIR : MonoBehaviour {
 		PD.Messaging.Send(patch.DollarZero.ToString ()+"-D",new Float(f*scale));
 	}
 
-	public float[] Process_Audio(float[] data,int channels,float[] input){
-		float[] output=new float[16384];
+	public float[] Process_Audio(int Length,int channels,float[] input){
+		float[] output=new float[Length];
 		PD.Start ();
-		PD.Process ((int)(data.Length / PD.BlockSize / channels), input, output);
+		PD.Process ((int)(Length / PD.BlockSize / channels), input, output);
 		PD.Stop();
 		return output;
 	}
 		
-	void Start(){		
+	void Awake(){
 		PD = new Pd (PdManager.Instance.numberOfInputChannel, PdManager.Instance.numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets"});
+		//PD = new Pd (0,2, AudioSettings.outputSampleRate,new List<string>() {Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets"});
+		PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
+			Debug.Log(e.Symbol.Value);
+		};
 		patch = PD.LoadPatch (Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets" +	Path.DirectorySeparatorChar.ToString () + pdPatchName);
 		if(listener==null){
 			//Seek audio listeners in scene
@@ -108,10 +113,32 @@ public class HRIR : MonoBehaviour {
 				listener = listeners[0].gameObject;
 			}
 		}
+		//PD.Start ();
 	}
+
+	/*void Start(){		
+		PD = new Pd (PdManager.Instance.numberOfInputChannel, PdManager.Instance.numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets"});
+		PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
+			Debug.Log(e.Symbol.Value);
+		};
+		patch = PD.LoadPatch (Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets" +	Path.DirectorySeparatorChar.ToString () + pdPatchName);
+		if(listener==null){
+			//Seek audio listeners in scene
+			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();
+			if (listeners.Length == 0) {
+				//The sound doesn't make sense without no one to hear it
+				Debug.LogWarning ("No Listner founds in this scene!");
+				Destroy (this);
+			} else {
+				//Set a listener
+				listener = listeners[0].gameObject;
+			}
+		}
+	}*/
 
 
 	void OnDestroy() {
+		//PD.Stop();
 		patch.Dispose();
 		PD.Dispose();
 	}

@@ -91,6 +91,7 @@
      <Compile Include="Assets\LibPD\PdStereo.cs" />
      <Compile Include="Assets\Prefab\Scripts\cam_move.cs" />
      <Compile Include="Assets\Prefab\Scripts\drone_script.cs" />
+     <None Include="Assets\LibPD\libpd_csharp\README.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

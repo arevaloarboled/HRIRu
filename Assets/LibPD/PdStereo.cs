@@ -47,7 +47,7 @@ public class PdStereo : MonoBehaviour {
 			first = true;
 			hrir_list=PdManager.Instance.Get_SoundSources ();
 			foreach (HRIR sound_source in hrir_list) {
-				ToMixing = sound_source.Process_Audio (data, channels, PdInput);
+				ToMixing = sound_source.Process_Audio (data.Length, channels, PdInput);
 				if (first) {
 					PdOutput = ToMixing;
 					first = false;
