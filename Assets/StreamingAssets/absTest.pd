@@ -1,8 +1,0 @@
-#N canvas 732 384 450 300 10;
-#X obj 153 101 catch~ out1;
-#X obj 129 64 empty 440;
-#X obj 235 27 loadbang;
-#X obj 163 137 filter~ bpq2 500 0.01 1 1;
-#X obj 148 192 dac~ 1;
-#X connect 0 0 3 0;
-#X connect 3 0 4 0;

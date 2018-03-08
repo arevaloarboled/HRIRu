@@ -87,7 +87,6 @@
      <Compile Include="Assets\LibPD\libpd_csharp\Native\Messaging.cs" />
      <Compile Include="Assets\LibPD\libpd_csharp\Native\Midi.cs" />
      <Compile Include="Assets\LibPD\libpd_csharp\Properties\AssemblyInfo.cs" />
-     <Compile Include="Assets\LibPD\PdAudioSource.cs" />
      <Compile Include="Assets\LibPD\PdManager.cs" />
      <Compile Include="Assets\LibPD\PdStereo.cs" />
      <Compile Include="Assets\Prefab\Scripts\cam_move.cs" />

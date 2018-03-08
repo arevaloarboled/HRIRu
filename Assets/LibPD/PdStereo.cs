@@ -41,7 +41,7 @@ public class PdStereo : MonoBehaviour {
 			else
 				PdOutput = new float[0];
 			//Debug.Log (PTest);
-			LibPD.Process ((int)(data.Length / LibPD.BlockSize / channels), PdInput, PdOutput);
+			PdOutput=PdManager.Instance.Process_Audio(data.Length, channels, PdInput);
 		}
 
 		if (PdManager.Instance != null) {

@@ -1,5 +1,0 @@
-#N canvas 684 373 450 300 10;
-#X obj 161 184 throw~ out2;
-#X obj 67 184 throw~ out1;
-#X obj 124 76 osc~ 320;
-#X connect 2 0 0 0;
