@@ -7,19 +7,30 @@ using LibPDBinding;
 
 public class PdManager : MonoBehaviour {
 
-
+	/// <summary>
+	/// The number of input channels to spatializer, if it is greater than 0, it will start to listen the Mic_Device, the recommended value is 1 to listen mono signal of the microphone.
+	/// </summary>
 	public int numberOfInputChannel = 0;
+	/// <summary>
+	/// The number of output channels from spatializer, the recommended value is 2, HRIR spatializer is focus to stereo systems.
+	/// </summary>
 	public int numberOfOutputChannel = 2;
+	/// <summary>
+	/// Mixers to put the processed audio.
+	/// </summary>
 	public AudioMixerGroup[] targetMixerGroups;
-	private GameObject pdMixer;
+	private GameObject pdMixer;//Mixer object
+	/// <summary>
+	/// Microphone device to take a signal to spatializer, if it is null, it will take the default microphone for unity.
+	/// </summary>
 	public string Mic_Device=""; //Microsoft® LifeCam HD-5000 //Logitech USB Headset
-	private HRIR[] sound_sources;
+	private HRIR[] sound_sources; //All sound source in scene
 
 	//
-	private AudioClip Mic;
-	private bool Is_Device=false;
-	private float[] PDMic_Input;
-	private int Temp_InputChannels = 0;
+	private AudioClip Mic; //Class to recording from microphone.
+	private bool Is_Device=false; //Exists this device.
+	private float[] PDMic_Input; //Buffer given from microphone.
+	private int Temp_InputChannels = 0;  //Temporal variable to save number of inputs.
 	//
 
 	private static PdManager _instance;
@@ -31,11 +42,7 @@ public class PdManager : MonoBehaviour {
 			return _instance;
 		}
 	}
-
-	public float[] get_PDMic_Input(){
-		return PDMic_Input;
-	}
-
+	//Create a mixer.
 	private void createPdMixer(){
 		pdMixer = new GameObject ("PdMixer");
 		for(int i=0;i<numberOfOutputChannel/2;++i){
@@ -67,7 +74,9 @@ public class PdManager : MonoBehaviour {
 			Destroy (gameObject);
 		}
 	}
-		
+	/// <summary>
+	/// Function to start record from Mic_Device.
+	/// </summary>
 	void Avaible_Mic(){
 		Is_Device = false;
 		if(numberOfInputChannel<=0){
@@ -88,12 +97,18 @@ public class PdManager : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Function to stop record from Mic_Device.
+	/// </summary>
 	public void Disable_Mic(){
 		Microphone.End (Mic_Device);
 		Temp_InputChannels = numberOfInputChannel;
 		numberOfInputChannel = 0;
 	}
-
+	/// <summary>
+	/// Function to get a buffer from Mic_Device.
+	/// </summary>
+	/// <returns> Buffer of audio from Mic_Device. </returns>
 	public float [] Get_Audio_Mic(){
 		if(numberOfInputChannel > 0){
 			int pos = Microphone.GetPosition (Mic_Device);
@@ -103,7 +118,10 @@ public class PdManager : MonoBehaviour {
 		}
 		return PDMic_Input;
 	}
-
+	/// <summary>
+	/// Function to return the sound sources objects in scene.
+	/// </summary>
+	/// <returns> Array with all spatializers in scene. </returns>
 	public HRIR[] Get_SoundSources(){
 		return sound_sources;
 	}
@@ -114,7 +132,7 @@ public class PdManager : MonoBehaviour {
 	}
 
 	void Update(){	
-		sound_sources = UnityEngine.Object.FindObjectsOfType<HRIR> ();	
+		sound_sources = UnityEngine.Object.FindObjectsOfType<HRIR> ();//Refresh sound sources objects, that posible to the new object has create	
 	}		
 		
 }

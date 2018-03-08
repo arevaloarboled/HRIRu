@@ -9,16 +9,26 @@ using System.IO;
 using System;
 
 public class HRIR : MonoBehaviour {
-	private string pdPatchName="hrir.pd";
+	private string pdPatchName="hrir.pd"; //Patch that have HRIR spatializer
+	/// <summary>
+	/// The scale of distance respectively between sound source and listener in Cm.
+	/// </summary>
 	public float scale=1f; //Scale of Cm
-	private Patch patch;
-	private Pd PD;
+	private Patch patch; //Patch of sound spatializer
+	private Pd PD; //Instance of pure data for this sound sources
 	public GameObject listener=null; //Listener object
+	private bool _isPlaying=false; //Spatializer is working or not
+
+	public bool isPlaying{
+		get{ 
+			return _isPlaying;
+		}
+	}
 
 	/// <summary>
 	/// Function to load route of files .WAV in patch HRIR
 	/// </summary>
-	/// <param name="song">Is the path song from the assets folder</param>
+	/// <param name="song">Is the path song from the assets folder, assume that the path starts in assets. </param>
 	/// <returns> Returns true if path is load successfully </returns>
 	public bool Load_Audio(string song,params object[] args){
 		string[] splt = song.Split ('.');
@@ -86,6 +96,13 @@ public class HRIR : MonoBehaviour {
 		PD.Messaging.Send(patch.DollarZero.ToString ()+"-D",new Float(f*scale));
 	}
 
+	/// <summary>
+	/// Function to do the process audio in pure data, pass the input buffers and output buffers.
+	/// </summary>
+	/// <param name="length">Size of buffer in unity.</param>
+	/// <param name="channels">Number of channels ouput of unity.</param>
+	/// <param name="input">Buffer of input pass to pure data.</param>
+	/// <returns> Buffer of audio processed from pure data. </returns>
 	public float[] Process_Audio(int Length,int channels,float[] input){
 		float[] output=new float[Length];
 		PD.Start ();
@@ -93,14 +110,16 @@ public class HRIR : MonoBehaviour {
 		PD.Stop();
 		return output;
 	}
-		
-	void Awake(){
+	/// <summary>
+	/// Dispose sound spatializer for sound sources object
+	/// </summary>	
+	public void Available(){
 		PD = new Pd (PdManager.Instance.numberOfInputChannel, PdManager.Instance.numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets"});
-		//PD = new Pd (0,2, AudioSettings.outputSampleRate,new List<string>() {Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets"});
-		PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
+		//Uses this to get prints of pure data
+		/*PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
 			Debug.Log(e.Symbol.Value);
-		};
-		patch = PD.LoadPatch (Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets" +	Path.DirectorySeparatorChar.ToString () + pdPatchName);
+		};*/
+		patch = PD.LoadPatch (Application.streamingAssetsPath +	Path.DirectorySeparatorChar.ToString () + pdPatchName);
 		if(listener==null){
 			//Seek audio listeners in scene
 			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();
@@ -113,54 +132,39 @@ public class HRIR : MonoBehaviour {
 				listener = listeners[0].gameObject;
 			}
 		}
-		//PD.Start ();
+		_isPlaying = true;
 	}
 
-	/*void Start(){		
-		PD = new Pd (PdManager.Instance.numberOfInputChannel, PdManager.Instance.numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets"});
-		PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
-			Debug.Log(e.Symbol.Value);
-		};
-		patch = PD.LoadPatch (Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets" +	Path.DirectorySeparatorChar.ToString () + pdPatchName);
-		if(listener==null){
-			//Seek audio listeners in scene
-			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();
-			if (listeners.Length == 0) {
-				//The sound doesn't make sense without no one to hear it
-				Debug.LogWarning ("No Listner founds in this scene!");
-				Destroy (this);
-			} else {
-				//Set a listener
-				listener = listeners[0].gameObject;
-			}
-		}
-	}*/
-
+	public void Disable(){
+		patch.Dispose();
+		PD.Dispose();
+		_isPlaying = false;
+	}
 
 	void OnDestroy() {
-		//PD.Stop();
 		patch.Dispose();
 		PD.Dispose();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		//Calculate distance between listener and sound source	
-		Update_Distance (Mathf.Abs (Vector3.Distance (listener.transform.position, transform.position)));				
-		//Calculate diretion vector between listener and sound source	
-		Vector3 dir=(transform.position-listener.transform.position).normalized;
-		//Calculate angle of elevation between listener and sound source	
-		float elevation=Vector3.Angle(listener.transform.forward,new Vector3(listener.transform.forward.x,dir.y,listener.transform.forward.z));
-		if(dir.y<listener.transform.forward.y){
-			elevation = -elevation;
+		if (_isPlaying) {
+			//Calculate distance between listener and sound source	
+			Update_Distance (Mathf.Abs (Vector3.Distance (listener.transform.position, transform.position)));				
+			//Calculate diretion vector between listener and sound source	
+			Vector3 dir=(transform.position-listener.transform.position).normalized;
+			//Calculate angle of elevation between listener and sound source	
+			float elevation=Vector3.Angle(listener.transform.forward,new Vector3(listener.transform.forward.x,dir.y,listener.transform.forward.z));
+			if(dir.y<listener.transform.forward.y){
+				elevation = -elevation;
+			}
+			Update_Elevation (elevation);
+			//Calculate angle of azimuth between listener and sound source
+			float azimuth=Vector3.Angle(listener.transform.forward,new Vector3(dir.x,listener.transform.forward.y,dir.z));
+			if(listener.transform.forward.x*dir.z-(listener.transform.forward.z*dir.x)<0){ //use determinant to know the direction of azimuth
+				azimuth = 360 - azimuth;
+			}
+			Update_Azimuth (azimuth);
 		}
-		Update_Elevation (elevation);
-		//Calculate angle of azimuth between listener and sound source
-		float azimuth=Vector3.Angle(listener.transform.forward,new Vector3(dir.x,listener.transform.forward.y,dir.z));
-		if(listener.transform.forward.x*dir.z-(listener.transform.forward.z*dir.x)<0){ //use determinant to know the direction of azimuth
-			azimuth = 360 - azimuth;
-		}
-		Update_Azimuth (azimuth);
-		//Debug.Log ("azimuth "+azimuth+" elevation "+elevation+" Direction "+dir+" Listener "+listener.transform.forward);
 	}
 }
