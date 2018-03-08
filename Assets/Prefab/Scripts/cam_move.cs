@@ -17,22 +17,22 @@ public class cam_move : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(Input.GetKey("w")){
-			transform.position = transform.position + Vector3.forward*0.5f;
+			transform.position = transform.position + Vector3.forward*moveSpeed;
 		}
 		if(Input.GetKey("s")){
-			transform.position = transform.position + Vector3.back*0.5f;
+			transform.position = transform.position + Vector3.back*moveSpeed;
 		}
 		if(Input.GetKey("d")){
-			transform.position = transform.position + Vector3.right*0.5f;
+			transform.position = transform.position + Vector3.right*moveSpeed;
 		}
 		if(Input.GetKey("a")){
-			transform.position = transform.position + Vector3.left*0.5f;
+			transform.position = transform.position + Vector3.left*moveSpeed;
 		}
 		if(Input.GetKey("e")){
-			transform.position = transform.position + Vector3.up*0.5f;
+			transform.position = transform.position + Vector3.up*moveSpeed;
 		}
 		if(Input.GetKey("q")){
-			transform.position = transform.position + Vector3.down*0.5f;
+			transform.position = transform.position + Vector3.down*moveSpeed;
 		}
 
 		// Get the left mouse button

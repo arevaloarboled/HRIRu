@@ -7,19 +7,28 @@ using System;
 using LibPDBinding.Managed;
 
 public class HRIR : MonoBehaviour {
-	private string pdPatchName="hrir.pd";
+	private string pdPatchName="hrir.pd"; //Patch that have HRIR spatializer
+	/// <summary>
+	/// The scale of distance respectively between sound source and listener in Cm.
+	/// </summary>
 	public float scale=1f; //Scale of Cm
-	private int dollarzero=-999;
+	private int dollarzero=-999; //Reference of patch
 	public GameObject listener=null; //Listener object
-	private bool is_playing=false;
+	private bool _isPlaying=false; //Spatializer is working or not
+
+	public bool isPlaying{
+		get{ 
+			return _isPlaying;
+		}
+	}
 
 	/// <summary>
 	/// Function to load route of files .WAV in patch HRIR
 	/// </summary>
 	/// <param name="song">Is the path song from the assets folder</param>
-	/// <returns> Returns true if path is load successfully </returns>
-	public bool Load_Audio(string song,params object[] args){
-		if (!is_playing)
+	/// <returns> Returns true if song is load successfully </returns>
+	public bool Load_Audio(string song){
+		if (!_isPlaying)
 			return false;
 		string[] splt = song.Split ('.');
 		if(!File.Exists(Application.dataPath+song) || splt[splt.Length-1]!="wav" )
@@ -34,7 +43,7 @@ public class HRIR : MonoBehaviour {
 	/// Function to reproduce song just once in HRIR
 	/// </summary>
 	/// <param name="song">Is the path song from the assets folder</param>
-	public void Play(string song,params object[] args){
+	public void Play(string song){
 		if(!Load_Audio(song)){
 			return;
 		}
@@ -44,7 +53,7 @@ public class HRIR : MonoBehaviour {
 	/// Function to reproduce song in bucle 
 	/// </summary>
 	/// <param name="song">Is the path song from the assets folder</param>
-	public void Play_Loop(string song,params object[] args){
+	public void Play_Loop(string song){
 		if(!Load_Audio(song)){
 			return;
 		}
@@ -54,7 +63,7 @@ public class HRIR : MonoBehaviour {
 	/// Function to stop song plays
 	/// </summary>
 	public void Stop(){
-		if(is_playing)
+		if(_isPlaying)
 			PdManager.Instance.Send(dollarzero.ToString ()+"-Stop");
 	}
 	/// <summary>
@@ -86,9 +95,13 @@ public class HRIR : MonoBehaviour {
 	private void Update_Distance (float f){
 		LibPD.SendFloat (dollarzero.ToString ()+"-D", f*scale);
 	}
-		
-	public void Init(){
-		dollarzero = PdManager.Instance.openNewPdPatch (pdPatchName);
+
+	/// <summary>
+	/// Dispose sound spatializer for sound sources object
+	/// </summary>
+	public void Available(){
+		if (scale <= 0f)	scale=1f;
+		dollarzero = PdManager.Instance.OpenNewPdPatch (Application.streamingAssetsPath+Path.DirectorySeparatorChar.ToString()+pdPatchName);
 		if(listener==null){
 			//Seek audio listeners in scene
 			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();
@@ -101,24 +114,27 @@ public class HRIR : MonoBehaviour {
 				listener = listeners[0].gameObject;
 			}
 		}
-		is_playing = true;
+		_isPlaying = true;
 	}
 
-	public void End(){
+	/// <summary>
+	/// Disable sound spatializer for sound sources object
+	/// </summary>
+	public void Disable(){
 		PdManager.Instance.ClosePdPatch(dollarzero);
 		listener = null;
-		is_playing = false;
+		_isPlaying = false;
 	}
 
 	void OnDestroy() {
-		End ();
+		Disable ();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if(is_playing){
+		if(_isPlaying){
 			//Calculate distance between listener and sound source	
-			Update_Distance (Mathf.Abs (Vector3.Distance (listener.transform.position, transform.position)));				
+			Update_Distance (Mathf.Abs (Vector3.Distance (listener.transform.position, transform.position))*scale);				
 			//Calculate diretion vector between listener and sound source	
 			Vector3 dir=(transform.position-listener.transform.position).normalized;
 			//Calculate angle of elevation between listener and sound source	
@@ -133,7 +149,6 @@ public class HRIR : MonoBehaviour {
 				azimuth = 360 - azimuth;
 			}
 			Update_Azimuth (azimuth);
-			//Debug.Log ("azimuth "+azimuth+" elevation "+elevation+" Direction "+dir+" Listener "+listener.transform.forward);
 		}
 	}
 }

@@ -9,22 +9,43 @@ using LibPDBinding.Managed.Data;
 
 public class PdManager : MonoBehaviour {
 
-
+	/// <summary>
+	/// The number of input channels to spatializer, if it is greater than 0, it will start to listen the Mic_Device, the recommended value is 1 to listen mono signal of the microphone.
+	/// </summary>
 	public int numberOfInputChannel = 0;
+	/// <summary>
+	/// The number of output channels from spatializer, the recommended value is 2, HRIR spatializer is focus to stereo systems.
+	/// </summary>
 	public int numberOfOutputChannel = 2;
+	/// <summary>
+	/// Mixers to put the processed audio.
+	/// </summary>
 	public AudioMixerGroup[] targetMixerGroups;
+	/// <summary>
+	/// Start computing audio.
+	/// </summary>
 	public bool startDspOnStart = false;
-	private Pd PD;
-	private bool _pdDsp = true;
-	private List<Patch> _loadedPatches = new List<Patch>();
-	private GameObject pdMixer;
+	private Pd PD; //Instance of pure data
+	/// <summary>
+	/// Is computing audio?.
+	/// </summary>
+	public bool pdDsp = true;
+	/// <summary>
+	/// Is recording from Mic_Device?.
+	/// </summary>
+	public bool isRecording=false;
+	private List<Patch> _loadedPatches = new List<Patch>(); //All patches loaded
+	private GameObject pdMixer; //Mixer object
+	/// <summary>
+	/// Microphone device to take a signal to spatializer, if it is null, it will take the default microphone for unity.
+	/// </summary>
 	public string Mic_Device=""; //Microsoft® LifeCam HD-5000 //Logitech USB Headset
 
 	//
-	private AudioClip Mic;
-	private bool Is_Device=false;
-	private float[] PDMic_Input;
-	private int Ni = 0;
+	private AudioClip Mic; //Class to recording from microphone.
+	private bool Is_Device=false; //Exists this device.
+	private float[] PDMic_Input; //Buffer given from microphone.
+	private int Ni = 0; //Temporal variable to save number of inputs.
 	//
 
 	private static PdManager _instance;
@@ -37,29 +58,20 @@ public class PdManager : MonoBehaviour {
 		}
 	}
 
-
-	public bool PdDSP{
-		get{
-			return _pdDsp;
-		}
-		set{
-			_pdDsp = value;
-			LibPD.ComputeAudio (_pdDsp);
-		}
-	}
-
-	public float[] get_PDMic_Input(){
-		return PDMic_Input;
-	}
-
-	public int openNewPdPatch(string name){
-		Patch patch = PD.LoadPatch(Application.dataPath +
-			Path.DirectorySeparatorChar.ToString () + "StreamingAssets" +
-		                 Path.DirectorySeparatorChar.ToString () + name);
+	/// <summary>
+	/// Function to load patch in pure data
+	/// </summary>
+	/// <param name="name">Is a full path of the .pd patch to load. </param>
+	/// <returns> References ID of patch in pure data. </returns>
+	public int OpenNewPdPatch(string name){
+		Patch patch = PD.LoadPatch(name);
 		_loadedPatches.Add(patch);
 		return patch.DollarZero;
 	}
-
+	/// <summary>
+	/// Function to close and remove patch of pure data.
+	/// </summary>
+	/// <param name="dollarzero">ID references of patch given at the time of loading. </param>
 	public void ClosePdPatch(int dollarzero){
 		foreach(Patch patch in _loadedPatches){
 			if(patch.DollarZero==dollarzero){
@@ -69,32 +81,56 @@ public class PdManager : MonoBehaviour {
 			}
 		}
 	}
-
-	public void Send(string reciver,float data){
-		PD.Messaging.Send(reciver, new Float(data));	
+	/// <summary>
+	/// Function to send a float to a receiver in some patch loaded in pure data.
+	/// </summary>
+	/// <param name="receiver">Name of receiver in the patch (remind the dollarzero of the patch).</param>
+	/// <param name="data">Float data to send.</param>
+	public void Send(string receiver,float data){
+		PD.Messaging.Send(receiver, new Float(data));	
 	}
-
-	public void Send(string reciver,string data){
-		PD.Messaging.Send(reciver, new Symbol(data));	
+	/// <summary>
+	/// Function to send a symbol to a receiver in some patch loaded in pure data.
+	/// </summary>
+	/// <param name="receiver">Name of receiver in the patch (remind the dollarzero of the patch).</param>
+	/// <param name="data">Symbol data to send.</param>
+	public void Send(string receiver,string data){
+		PD.Messaging.Send(receiver, new Symbol(data));	
 	}
-
-	public void Send(string reciver){
-		PD.Messaging.Send(reciver, new Bang());	
+	/// <summary>
+	/// Function to send a Bang to a receiver in some patch loaded in pure data.
+	/// </summary>
+	/// <param name="receiver">Name of receiver in the patch (remind the dollarzero of the patch).</param>
+	public void Send(string receiver){
+		PD.Messaging.Send(receiver, new Bang());	
 	}
-
+	/// <summary>
+	/// Function to change state of process audio.
+	/// </summary>
+	/// <param name="state">True to put available audio, false to disable audio.</param>
 	public void Compute(bool state){
-		if (state)
+		if (state) {
 			PD.Start ();
-		else
+			pdDsp = true;
+		} else {
 			PD.Stop ();
+			pdDsp = false;
+		}
 	}
-
-	public float[] Process_Audio(int Length,int channels,float[] input){
-		float[] output=new float[Length];
-		PD.Process ((int)(Length / PD.BlockSize / channels), input, output);
+	/// <summary>
+	/// Function to do the process audio in pure data, pass the input buffers and output buffers.
+	/// </summary>
+	/// <param name="length">Size of buffer in unity.</param>
+	/// <param name="channels">Number of channels ouput of unity.</param>
+	/// <param name="input">Buffer of input pass to pure data.</param>
+	/// <returns> Buffer of audio processed from pure data. </returns>
+	public float[] Process_Audio(int length,int channels,float[] input){
+		float[] output=new float[length];
+		PD.Process ((int)(length / PD.BlockSize / channels), input, output);
 		return output;
 	}
 
+	//Create a mixer.
 	private void createPdMixer(){
 		pdMixer = new GameObject ("PdMixer");
 		for(int i=0;i<numberOfOutputChannel/2;++i){
@@ -116,25 +152,32 @@ public class PdManager : MonoBehaviour {
 		if (_instance == null) {
 			_instance = this;
 			DontDestroyOnLoad (gameObject);
-			PD=new Pd(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {Application.dataPath + Path.DirectorySeparatorChar.ToString () + "StreamingAssets"});
-			openNewPdPatch("pdManager.pd");
+			PD=new Pd(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {Application.streamingAssetsPath});
+			OpenNewPdPatch(Application.streamingAssetsPath+"/pdManager.pd");
 			if (numberOfOutputChannel != targetMixerGroups.Length * 2) {
 				Debug.LogWarning ("The number of output channel is not equal to the number of mixer group!");
 				Debug.LogWarning ("Set number of output channel to " + (targetMixerGroups.Length * 2).ToString ());
 				numberOfOutputChannel = targetMixerGroups.Length * 2;
 			}
 			createPdMixer ();
-			if(startDspOnStart) PD.Start();
+			if (startDspOnStart) {
+				PD.Start ();
+				pdDsp = true;
+			}
 		} else if (!Instance.Equals((object)this)){
 			Destroy (gameObject);
 		}
 	}
 		
-	void Avaible_Mic(){
+	/// <summary>
+	/// Function to start record from Mic_Device.
+	/// </summary>
+	public void Avaible_Mic(){
 		if(numberOfInputChannel<=0){
 			numberOfInputChannel = Ni;
 		}
 		if (numberOfInputChannel > 0) {
+			Is_Device = false;
 			foreach (string device in Microphone.devices) {
 				if(Mic_Device==device){
 					Is_Device = true;
@@ -146,15 +189,22 @@ public class PdManager : MonoBehaviour {
 			Mic = Microphone.Start(Mic_Device, true, 3, AudioSettings.outputSampleRate);
 			//PDMic_Input=new float[Mic.samples * Mic.channels];
 			PDMic_Input=new float[1024*numberOfInputChannel];
+			isRecording = true;
 		}
 	}
-
-	void Disable_Mic(){
+	/// <summary>
+	/// Function to stop record from Mic_Device.
+	/// </summary>
+	public void Disable_Mic(){
 		Microphone.End (Mic_Device);
 		Ni = numberOfInputChannel;
 		numberOfInputChannel = 0;
+		isRecording = false;
 	}
-
+	/// <summary>
+	/// Function to get a buffer from Mic_Device.
+	/// </summary>
+	/// <returns> Buffer of audio from Mic_Device. </returns>
 	public float [] Get_Audio_Mic(){
 		if(numberOfInputChannel > 0){
 			int pos = Microphone.GetPosition (Mic_Device);
