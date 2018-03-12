@@ -91,9 +91,9 @@ public class HRIR : MonoBehaviour {
 	/// <summary>
 	/// Function to update distance in HRIR
 	/// </summary>
-	/// <param name="f">Is a angle of distance</param>
+	/// <param name="f">Is a distance between sound sources and listener.</param>
 	private void Update_Distance (float f){
-		LibPD.SendFloat (dollarzero.ToString ()+"-D", f*scale);
+		LibPD.SendFloat (dollarzero.ToString ()+"-D", f);
 	}
 
 	/// <summary>
