@@ -53,7 +53,7 @@ public class PdStereo : MonoBehaviour {
 					first = false;
 				} else{
 					for(int i=0;i<PdOutput.Length;i++){						
-						PdOutput[i] = ToMixing[i] + PdOutput[i] - (ToMixing[i] * PdOutput[i]);	
+						PdOutput[i] = (ToMixing[i] + PdOutput[i])/2;	
 					}
 				}
 			}
@@ -62,7 +62,7 @@ public class PdStereo : MonoBehaviour {
 		if (PdManager.Instance != null) {
 			for (int i = 0; i < data.Length / channels; i++) {
 				for (int j = 0; j < selectedChannels.Length; j++) {
-					data [(i * channels) + j] = PdOutput [(i * PdManager.Instance.numberOfOutputChannel) + selectedChannels [j]];
+					data [(i * channels) + j] =(data [(i * channels) + j]+PdOutput [(i * PdManager.Instance.numberOfOutputChannel) + selectedChannels [j]])/2;
 				}
 			}
 		}

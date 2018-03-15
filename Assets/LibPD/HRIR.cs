@@ -30,7 +30,7 @@ public class HRIR : MonoBehaviour {
 	/// </summary>
 	/// <param name="song">Is the path song from the assets folder, assume that the path starts in assets. </param>
 	/// <returns> Returns true if path is load successfully </returns>
-	public bool Load_Audio(string song,params object[] args){
+	public bool Load_Audio(string song){
 		string[] splt = song.Split ('.');
 		if(!File.Exists(Application.dataPath+song) || splt[splt.Length-1]!="wav" )
 		{
@@ -41,10 +41,21 @@ public class HRIR : MonoBehaviour {
 		return true;
 	}
 	/// <summary>
+	/// Function to change the gain of this sound sources.  
+	/// </summary>
+	/// <param name="f">Default is 1, Min. value 0, Max. value 1.5</param>
+	public void Volumen(float f){
+		if (f < 0f)
+			f = 0f;
+		if (f > 1.5f)
+			f = 1.5f;
+		PD.Messaging.Send(patch.DollarZero.ToString ()+"-Vol",new Float(f));
+	}
+	/// <summary>
 	/// Function to reproduce song just once in HRIR
 	/// </summary>
 	/// <param name="song">Is the path song from the assets folder</param>
-	public void Play(string song,params object[] args){
+	public void Play(string song){
 		if(!Load_Audio(song)){
 			return;
 		}
@@ -54,7 +65,7 @@ public class HRIR : MonoBehaviour {
 	/// Function to reproduce song in bucle 
 	/// </summary>
 	/// <param name="song">Is the path song from the assets folder</param>
-	public void Play_Loop(string song,params object[] args){
+	public void Play_Loop(string song){
 		if(!Load_Audio(song)){
 			return;
 		}
@@ -93,7 +104,7 @@ public class HRIR : MonoBehaviour {
 	/// </summary>
 	/// <param name="f">Is a angle of distance</param>
 	private void Update_Distance (float f){
-		PD.Messaging.Send(patch.DollarZero.ToString ()+"-D",new Float(f*scale));
+		PD.Messaging.Send(patch.DollarZero.ToString ()+"-D",new Float(f));
 	}
 
 	/// <summary>
@@ -120,6 +131,7 @@ public class HRIR : MonoBehaviour {
 			Debug.Log(e.Symbol.Value);
 		};*/
 		patch = PD.LoadPatch (Application.streamingAssetsPath +	Path.DirectorySeparatorChar.ToString () + pdPatchName);
+		Volumen (1f);
 		if(listener==null){
 			//Seek audio listeners in scene
 			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();
@@ -150,7 +162,7 @@ public class HRIR : MonoBehaviour {
 	void Update () {
 		if (_isPlaying) {
 			//Calculate distance between listener and sound source	
-			Update_Distance (Mathf.Abs (Vector3.Distance (listener.transform.position, transform.position)));				
+			Update_Distance (Mathf.Abs (Vector3.Distance (listener.transform.position, transform.position))*scale);				
 			//Calculate diretion vector between listener and sound source	
 			Vector3 dir=(transform.position-listener.transform.position).normalized;
 			//Calculate angle of elevation between listener and sound source	
