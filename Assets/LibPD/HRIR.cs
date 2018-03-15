@@ -21,7 +21,17 @@ public class HRIR : MonoBehaviour {
 			return _isPlaying;
 		}
 	}
-
+	/// <summary>
+	/// Function to change the gain of this sound sources.  
+	/// </summary>
+	/// <param name="f">Default is 1, Min. value 0, Max. value 1.5</param>
+	public void Volumen(float f){
+		if (f < 0f)
+			f = 0f;
+		if (f > 1.5f)
+			f = 1.5f;
+		PdManager.Instance.Send(dollarzero.ToString ()+"-Vol",f);
+	}
 	/// <summary>
 	/// Function to load route of files .WAV in patch HRIR
 	/// </summary>
@@ -93,7 +103,7 @@ public class HRIR : MonoBehaviour {
 	/// </summary>
 	/// <param name="f">Is a distance between sound sources and listener.</param>
 	private void Update_Distance (float f){
-		LibPD.SendFloat (dollarzero.ToString ()+"-D", f);
+		PdManager.Instance.Send(dollarzero.ToString ()+"-D", f);
 	}
 
 	/// <summary>
@@ -102,6 +112,7 @@ public class HRIR : MonoBehaviour {
 	public void Available(){
 		if (scale <= 0f)	scale=1f;
 		dollarzero = PdManager.Instance.OpenNewPdPatch (Application.streamingAssetsPath+Path.DirectorySeparatorChar.ToString()+pdPatchName);
+		Volumen (1f);
 		if(listener==null){
 			//Seek audio listeners in scene
 			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();

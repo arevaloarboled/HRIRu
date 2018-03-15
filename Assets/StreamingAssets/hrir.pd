@@ -1,4 +1,4 @@
-#N canvas 793 104 582 546 10;
+#N canvas -1093 166 582 546 10;
 #X obj 203 24 hsl 128 15 0 359 0 0 empty empty Azimuth_(o) -2 -8 0
 10 -262144 -1 -1 0 1;
 #X obj 204 84 hsl 128 15 -40 90 0 0 empty empty Elevation_(o) -2 -8
@@ -14,7 +14,7 @@
 #X obj 46 44 r \$0-Play;
 #X obj 46 155 readsf~;
 #X obj 122 316 throw~ out1;
-#X obj 173 342 throw~ out2;
+#X obj 179 337 throw~ out2;
 #X msg 131 93 0;
 #X obj 366 265 readsf~;
 #X msg 464 206 0;
@@ -34,20 +34,24 @@
 #X symbolatom 366 186 10 0 0 0 - - -, f 10;
 #X obj 122 162 r~ in1;
 #X obj 122 181 r~ in2;
-#X obj 122 255 hrir~ 2048;
+#X obj 235 221 r \$0-Vol;
+#X obj 179 289 *~;
+#X floatatom 235 276 5 0 0 0 - - -, f 5;
+#X obj 122 289 *~, f 4;
+#X obj 122 255 hrir~ 1024;
 #X connect 0 0 5 0;
 #X connect 1 0 4 0;
 #X connect 2 0 3 0;
-#X connect 3 0 32 3;
-#X connect 4 0 32 2;
-#X connect 5 0 32 1;
+#X connect 3 0 36 3;
+#X connect 4 0 36 2;
+#X connect 5 0 36 1;
 #X connect 6 0 1 0;
 #X connect 7 0 2 0;
 #X connect 8 0 0 0;
 #X connect 9 0 28 0;
-#X connect 10 0 32 0;
+#X connect 10 0 36 0;
 #X connect 13 0 10 0;
-#X connect 14 0 32 0;
+#X connect 14 0 36 0;
 #X connect 14 1 29 0;
 #X connect 15 0 14 0;
 #X connect 16 0 29 0;
@@ -60,11 +64,16 @@
 #X connect 23 0 15 0;
 #X connect 24 0 13 0;
 #X connect 25 0 26 1;
-#X connect 26 0 32 0;
+#X connect 26 0 36 0;
 #X connect 27 0 25 0;
 #X connect 28 0 22 0;
 #X connect 29 0 20 0;
 #X connect 30 0 26 0;
 #X connect 31 0 26 0;
-#X connect 32 0 11 0;
-#X connect 32 1 12 0;
+#X connect 32 0 34 0;
+#X connect 33 0 12 0;
+#X connect 34 0 33 1;
+#X connect 34 0 35 1;
+#X connect 35 0 11 0;
+#X connect 36 0 35 0;
+#X connect 36 1 33 0;
