@@ -40,7 +40,7 @@ public class PdStereo : MonoBehaviour {
 		if (PdManager.Instance != null) {
 			for (int i = 0; i < data.Length / channels; i++) {
 				for (int j = 0; j < selectedChannels.Length; j++) {
-					data [(i * channels) + j] =data [(i * channels) + j] + PdOutput [(i * PdManager.Instance.numberOfOutputChannel) + selectedChannels [j]]- (data [(i * channels) + j]*PdOutput [(i * PdManager.Instance.numberOfOutputChannel) + selectedChannels [j]]);
+					data [(i * channels) + j] =(data [(i * channels) + j] + PdOutput [(i * PdManager.Instance.numberOfOutputChannel) + selectedChannels [j]])/2;
 				}
 			}
 		}
