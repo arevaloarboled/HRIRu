@@ -1,19 +1,10 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/LibPD/PdStereo.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/HRIRu/API/PdManager.cs">
     <Files>
-      <File FileName="Assets/LibPD/HRIR.cs" Line="115" Column="5" />
-      <File FileName="Assets/LibPD/PdManager.cs" Line="129" Column="3" />
-      <File FileName="Assets/LibPD/PdStereo.cs" Line="42" Column="56" />
-      <File FileName="Assets/Prefab/Scripts/drone_script.cs" Line="1" Column="1" />
-      <File FileName="Assets/Prefab/Scripts/cam_move.cs" Line="1" Column="1" />
-      <File FileName="Assets/LibPD/libpd_csharp/Managed/Binding.cs" Line="1" Column="1" />
-      <File FileName="Assets/LibPD/libpd_csharp/LibPDNativeMethods.cs" Line="1" Column="1" />
-      <File FileName="Assets/LibPD/libpd_csharp/Managed/Pd.cs" Line="1" Column="1" />
-      <File FileName="Assets/LibPD/libpd_csharp/Native/Messaging.cs" Line="1" Column="1" />
-      <File FileName="Assets/LibPD/libpd_csharp/Managed/Patch.cs" Line="1" Column="1" />
-      <File FileName="Assets/LibPD/libpd_csharp/LibPDNativeMessaging.cs" Line="1" Column="1" />
-      <File FileName="Assets/LibPD/libpd_csharp/Native/General.cs" Line="1" Column="1" />
+      <File FileName="Assets/Prefab/Scripts/drone_script.cs" Line="43" Column="27" />
+      <File FileName="Assets/Prefab/Scripts/cam_move.cs" Line="29" Column="45" />
+      <File FileName="Assets/HRIRu/API/PdManager.cs" Line="157" Column="62" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

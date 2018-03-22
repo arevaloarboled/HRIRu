@@ -17,16 +17,16 @@ public class cam_move : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(Input.GetKey("w")){
-			transform.position = transform.position + Vector3.forward*moveSpeed;
+			transform.position = transform.position + transform.forward*moveSpeed;
 		}
 		if(Input.GetKey("s")){
-			transform.position = transform.position + Vector3.back*moveSpeed;
+			transform.position = transform.position - transform.forward*moveSpeed;
 		}
 		if(Input.GetKey("d")){
-			transform.position = transform.position + Vector3.right*moveSpeed;
+			transform.position = transform.position + transform.right*moveSpeed;
 		}
 		if(Input.GetKey("a")){
-			transform.position = transform.position + Vector3.left*moveSpeed;
+			transform.position = transform.position - transform.right*moveSpeed;
 		}
 		if(Input.GetKey("e")){
 			transform.position = transform.position + Vector3.up*moveSpeed;
