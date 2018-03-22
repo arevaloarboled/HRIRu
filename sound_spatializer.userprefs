@@ -1,10 +1,12 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/HRIRu/API/PdManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Prefab/Scripts/drone_script.cs">
     <Files>
-      <File FileName="Assets/Prefab/Scripts/drone_script.cs" Line="43" Column="27" />
-      <File FileName="Assets/Prefab/Scripts/cam_move.cs" Line="29" Column="45" />
-      <File FileName="Assets/HRIRu/API/PdManager.cs" Line="157" Column="62" />
+      <File FileName="Assets/Prefab/Scripts/drone_script.cs" Line="22" Column="29" />
+      <File FileName="Assets/Prefab/Scripts/cam_move.cs" Line="12" Column="27" />
+      <File FileName="Assets/HRIRu/API/PdManager.cs" Line="164" Column="31" />
+      <File FileName="Assets/HRIRu/API/HRIRu.cs" Line="36" Column="57" />
+      <File FileName="Assets/HRIRu/API/libpd_csharp/Managed/Pd.cs" Line="20" Column="41" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -33,7 +33,7 @@ public class HRIRu : MonoBehaviour {
 		PdManager.Instance.Send(dollarzero.ToString ()+"-Vol",f);
 	}
 	/// <summary>
-	/// Function to load route of files .WAV in patch HRIR
+	/// Function to load route of files .WAV in patch HRIR.
 	/// </summary>
 	/// <param name="song">Is the path song from the assets folder</param>
 	/// <returns> Returns true if song is load successfully </returns>

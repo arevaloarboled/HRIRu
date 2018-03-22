@@ -6,9 +6,12 @@ public class cam_move : MonoBehaviour {
 
 	public float turnSpeed = 4.0f;		// Speed of camera turning when mouse moves in along an axis
 	public float moveSpeed= 1f;
-
+	public GameObject prefab;
 	private Vector3 mouseOrigin;	// Position of cursor when mouse dragging starts
 	private bool isRotating;	// Is the camera being rotated?
+	public float delta_time=1f;
+	private float count_time=0f;
+	public bool is_pulling=false;
 	// Use this for initialization
 	void Start () {
 		
@@ -16,6 +19,23 @@ public class cam_move : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if(Time.time-count_time>delta_time && is_pulling){
+			GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity);
+			drone_script properties = clone.GetComponent<drone_script> ();
+			properties.tipe_move = (int)Random.Range (0f,2f);
+			count_time = Time.time;
+		}
+		if(Input.GetKeyDown(KeyCode.P)){
+			is_pulling = true;
+		}
+		if(Input.GetKeyDown(KeyCode.O)){
+			is_pulling = false;
+		}
+		if(Input.GetKeyDown(KeyCode.I)){
+			GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity);
+			drone_script properties = clone.GetComponent<drone_script> ();
+			properties.tipe_move = (int)Random.Range (0f,2f);
+		}
 		if(Input.GetKey("w")){
 			transform.position = transform.position + transform.forward*moveSpeed;
 		}
@@ -50,7 +70,6 @@ public class cam_move : MonoBehaviour {
 		if (isRotating)
 		{
 			Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - mouseOrigin);
-
 			transform.RotateAround(transform.position, transform.right, -pos.y * turnSpeed);
 			transform.RotateAround(transform.position, Vector3.up, pos.x * turnSpeed);
 		}

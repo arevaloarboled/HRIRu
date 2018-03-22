@@ -11,17 +11,21 @@ public class drone_script : MonoBehaviour {
 	private float t=0f;
 	public int tipe_move=0;
 	public bool use_mic=false;
+	public bool start_with_hrir=false;
 	public string sound = "";
 	private bool spatializer = false;
 	// Use this for initialization
 	void Start () {
 		hrir_control=this.GetComponent<HRIRu>();
 		audioSource = this.GetComponent<AudioSource> ();
-		/*hrir_control.Available();
-		if (use_mic)
-			hrir_control.Mic (true);
-		else
-			hrir_control.Play_Loop("Prefab/Sounds/"+sound);*/
+		if (start_with_hrir) {
+			hrir_control.Available();
+			if (use_mic)
+				hrir_control.Mic (true);
+			else
+				hrir_control.Play_Loop("Prefab/Sounds/"+sound);
+			audioSource.mute = !audioSource.mute;
+		}
 		if(scale<=0f)
 			scale = 5f;
 		if(tp<=0f)
@@ -30,7 +34,7 @@ public class drone_script : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetKeyDown(KeyCode.Space)){
+		if(Input.GetKeyDown(KeyCode.Space) && !start_with_hrir){
 			if (spatializer) {
 				Debug.Log ("Changing to unity spatializer...");
 				hrir_control.Disable ();
@@ -46,9 +50,12 @@ public class drone_script : MonoBehaviour {
 		Vector3 tmp=new Vector3(0,0,0);
 		switch(tipe_move){
 			case 0:
-				tmp = new Vector3 (Mathf.Cos (t), Mathf.Sin (t), Mathf.Cos (2 * t));
+				tmp = new Vector3 (Mathf.Sin (t), 0, Mathf.Cos (t));
 				break;
 			case 1:
+				tmp = new Vector3 (Mathf.Cos (5 * t), Mathf.Cos (t) + Mathf.Cos (5 * t), Mathf.Sin (3 * t));	
+				break;
+			case 2:
 				tmp = new Vector3 (Mathf.Cos (5 * t), Mathf.Cos (t) + Mathf.Cos (5 * t), Mathf.Sin (3 * t));	
 				break;
 			default:
