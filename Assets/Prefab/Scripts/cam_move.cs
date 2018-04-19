@@ -22,7 +22,7 @@ public class cam_move : MonoBehaviour {
 		if(Time.time-count_time>delta_time && is_pulling){
 			GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity);
 			drone_script properties = clone.GetComponent<drone_script> ();
-			properties.tipe_move = (int)Random.Range (0f,2f);
+			properties.tipe_move = (int)Random.Range (0f,3f);
 			count_time = Time.time;
 		}
 		if(Input.GetKeyDown(KeyCode.P)){
@@ -34,7 +34,7 @@ public class cam_move : MonoBehaviour {
 		if(Input.GetKeyDown(KeyCode.I)){
 			GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity);
 			drone_script properties = clone.GetComponent<drone_script> ();
-			properties.tipe_move = (int)Random.Range (0f,2f);
+			properties.tipe_move = (int)Random.Range (0f,3f);
 		}
 		if(Input.GetKey("w")){
 			transform.position = transform.position + transform.forward*moveSpeed;

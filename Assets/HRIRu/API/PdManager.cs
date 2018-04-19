@@ -30,7 +30,7 @@ public class PdManager : MonoBehaviour {
 	/// <summary>
 	/// Path of the API HRIRu.
 	/// </summary>
-	public string HRIRuPath="";
+	private string HRIRuPath="";
 	/// <summary>
 	/// Is computing audio?.
 	/// </summary>
@@ -62,7 +62,13 @@ public class PdManager : MonoBehaviour {
 			return _instance;
 		}
 	}
-
+	/// <summary>
+	/// This fuctions returns the HRIRu path.
+	/// </summary>
+	/// <returns> String with path of HRIRu API. </returns>
+	public string APIPath(){
+		return HRIRuPath;
+	}
 	/// <summary>
 	/// Function to load patch in pure data
 	/// </summary>
@@ -129,10 +135,10 @@ public class PdManager : MonoBehaviour {
 	/// <param name="channels">Number of channels ouput of unity.</param>
 	/// <param name="input">Buffer of input pass to pure data.</param>
 	/// <returns> Buffer of audio processed from pure data. </returns>
-	public float[] Process_Audio(int length,int channels,float[] input){
-		float[] output=new float[length];
+	public void Process_Audio(int length,int channels,float[] input,float[] output){
 		PD.Process ((int)(length / PD.BlockSize / channels), input, output);
-		return output;
+		//Debug.Log(length.ToString()+" "+PD.BlockSize.ToString()+" "+channels.ToString());
+		//PD.Process (16, input, output);
 	}
 
 	//Create a mixer.
@@ -160,9 +166,9 @@ public class PdManager : MonoBehaviour {
 			HRIRuPath=Path.GetDirectoryName(System.IO.Directory.GetFiles(Application.dataPath, "HRIRu.cs", SearchOption.AllDirectories)[0])+Path.DirectorySeparatorChar+".."+Path.DirectorySeparatorChar;
 			PD=new Pd(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {HRIRuPath+"StreamingAssets"});
 			//Uses this to get prints of Pure Data
-			/*PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
+			PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
 				Debug.Log(e.Symbol.Value);
-			};*/
+			};
 			OpenNewPdPatch(HRIRuPath+"StreamingAssets"+Path.DirectorySeparatorChar+"pdManager.pd");
 			if (numberOfOutputChannel != targetMixerGroups.Length * 2) {
 				Debug.LogWarning ("The number of output channel is not equal to the number of mixer group!");
@@ -228,8 +234,7 @@ public class PdManager : MonoBehaviour {
 	void Start () {
 		Avaible_Mic();
 	}
-
-
+		
 	void OnApplicationQuit(){
 		PD.Dispose ();
 	}

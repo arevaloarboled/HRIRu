@@ -91,6 +91,19 @@
      <Compile Include="Assets\HRIRu\API\PdStereo.cs" />
      <Compile Include="Assets\Prefab\Scripts\cam_move.cs" />
      <Compile Include="Assets\Prefab\Scripts\drone_script.cs" />
+     <Compile Include="Assets\Profile exporter\FunctionTableState.cs" />
+     <Compile Include="Assets\Profile exporter\ProfilerData.cs" />
+     <Compile Include="Assets\Profile exporter\ProfilerDataExporter.cs" />
+     <Compile Include="Assets\Profile exporter\StatsCalculator\AvgStatsCalculator.cs" />
+     <Compile Include="Assets\Profile exporter\StatsCalculator\MaxStatsCalculator.cs" />
+     <Compile Include="Assets\Profile exporter\StatsCalculator\MinStatsCalculator.cs" />
+     <Compile Include="Assets\Profile exporter\StatsCalculator\StatsCalculatorBase.cs" />
+     <Compile Include="Assets\Profile exporter\StatsCalculator\StatsCalculatorProvider.cs" />
+     <Compile Include="Assets\Profile exporter\UnityWrappers\GUIClip.cs" />
+     <Compile Include="Assets\Profile exporter\UnityWrappers\SplitterGUILayout.cs" />
+     <Compile Include="Assets\Profile exporter\UnityWrappers\SplitterState.cs" />
+     <Compile Include="Assets\Profile exporter\Utils\ByteSize.cs" />
+     <Compile Include="Assets\Profile exporter\Utils\TableGUILayout.cs" />
      <None Include="Assets\HRIRu\API\libpd_csharp\README.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

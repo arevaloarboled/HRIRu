@@ -15,6 +15,7 @@ public class HRIRu : MonoBehaviour {
 	private int dollarzero=-999; //Reference of patch
 	public GameObject listener=null; //Listener object
 	private bool _isPlaying=false; //Spatializer is working or not
+	//private int listener_id;
 
 	public bool isPlaying{
 		get{ 
@@ -111,7 +112,7 @@ public class HRIRu : MonoBehaviour {
 	/// </summary>
 	public void Available(){
 		if (scale <= 0f)	scale=1f;
-		dollarzero = PdManager.Instance.OpenNewPdPatch (PdManager.Instance.HRIRuPath+"StreamingAssets"+Path.DirectorySeparatorChar+pdPatchName);
+		dollarzero = PdManager.Instance.OpenNewPdPatch (PdManager.Instance.APIPath()+"StreamingAssets"+Path.DirectorySeparatorChar+pdPatchName);
 		Volume (1f);
 		if(listener==null){
 			//Seek audio listeners in scene
@@ -123,6 +124,7 @@ public class HRIRu : MonoBehaviour {
 			} else {
 				//Set a listener
 				listener = listeners[0].gameObject;
+				//listener_id = listener.GetInstanceID ();
 			}
 		}
 		_isPlaying = true;
@@ -139,6 +141,25 @@ public class HRIRu : MonoBehaviour {
 
 	void OnDestroy() {
 		Disable ();
+	}
+
+	public static void CartesianToSpherical(Vector3 cartCoords, out float outRadius, out float outPolar, out float outElevation){
+		if (cartCoords.x == 0)
+			cartCoords.x = Mathf.Epsilon;
+		outRadius = Mathf.Sqrt((cartCoords.x * cartCoords.x)
+			+ (cartCoords.y * cartCoords.y)
+			+ (cartCoords.z * cartCoords.z));
+		outPolar = Mathf.Atan(cartCoords.z / cartCoords.x);
+		if (cartCoords.x < 0)
+			outPolar += Mathf.PI;
+		outElevation = Mathf.Asin(cartCoords.y / outRadius);
+	}
+
+	public static void SphericalToCartesian(float radius, float polar, float elevation, out Vector3 outCart){
+		float a = radius * Mathf.Cos(elevation);
+		outCart.x = a * Mathf.Cos(polar);
+		outCart.y = radius * Mathf.Sin(elevation);
+		outCart.z = a * Mathf.Sin(polar);
 	}
 
 	// Update is called once per frame
@@ -160,6 +181,10 @@ public class HRIRu : MonoBehaviour {
 				azimuth = 360 - azimuth;
 			}
 			Update_Azimuth (azimuth);
+			//Debug.Log (azimuth.ToString()+"\t"+elevation.ToString()+"\t"+(Mathf.Abs (Vector3.Distance (transform.position,listener.transform.position))*scale).ToString());
+			/*Vector3 tmp;
+			SphericalToCartesian (Mathf.Abs (Vector3.Distance (transform.position,listener.transform.position))*scale,azimuth,elevation,out tmp);
+			Debug.Log (tmp.ToString()+"\t"+transform.position.ToString());*/
 		}
 	}
 }

@@ -17,7 +17,7 @@ public class drone_script : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		hrir_control=this.GetComponent<HRIRu>();
-		audioSource = this.GetComponent<AudioSource> ();
+		//audioSource = this.GetComponent<AudioSource> ();
 		if (start_with_hrir) {
 			hrir_control.Available();
 			if (use_mic)
@@ -44,7 +44,6 @@ public class drone_script : MonoBehaviour {
 				audioSource.mute = !audioSource.mute;
 				hrir_control.Available ();
 				hrir_control.Play_Loop("Prefab/Sounds/"+sound);
-				hrir_control.Volume (5f);
 			}
 		}
 		Vector3 tmp=new Vector3(0,0,0);
