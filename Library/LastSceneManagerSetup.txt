@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/Scene/TestHRIR.unity
-  isLoaded: 1
-  isActive: 1
