@@ -17,7 +17,7 @@ public class drone_script : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		hrir_control=this.GetComponent<HRIRu>();
-		//audioSource = this.GetComponent<AudioSource> ();
+		audioSource = this.GetComponent<AudioSource> ();
 		if (start_with_hrir) {
 			hrir_control.Available();
 			if (use_mic)

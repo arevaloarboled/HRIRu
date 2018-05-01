@@ -15,7 +15,6 @@ public class HRIRu : MonoBehaviour {
 	private int dollarzero=-999; //Reference of patch
 	public GameObject listener=null; //Listener object
 	private bool _isPlaying=false; //Spatializer is working or not
-	//private int listener_id;
 
 	public bool isPlaying{
 		get{ 
@@ -80,8 +79,8 @@ public class HRIRu : MonoBehaviour {
 	/// <summary>
 	/// Function to set available or unavailable the default microphone 
 	/// </summary>
-	/// <param name="available">Variable bool available</param>
-	public void Mic (bool available){
+	/// <param name="available">Variable bool available, default is true</param>
+	public void Mic (bool available=true){
 		if (available) PdManager.Instance.Send (dollarzero.ToString () + "-Mic", 1f); 
 		else PdManager.Instance.Send (dollarzero.ToString () + "-Mic", 0f);	
 	}
@@ -119,7 +118,7 @@ public class HRIRu : MonoBehaviour {
 			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();
 			if (listeners.Length == 0) {
 				//The sound doesn't make sense without no one to hear it
-				Debug.LogWarning ("No Listner founds in this scene!");
+				Debug.LogWarning ("No Listner founds in this scene.");
 				Destroy (this);
 			} else {
 				//Set a listener
@@ -140,26 +139,8 @@ public class HRIRu : MonoBehaviour {
 	}
 
 	void OnDestroy() {
-		Disable ();
-	}
-
-	public static void CartesianToSpherical(Vector3 cartCoords, out float outRadius, out float outPolar, out float outElevation){
-		if (cartCoords.x == 0)
-			cartCoords.x = Mathf.Epsilon;
-		outRadius = Mathf.Sqrt((cartCoords.x * cartCoords.x)
-			+ (cartCoords.y * cartCoords.y)
-			+ (cartCoords.z * cartCoords.z));
-		outPolar = Mathf.Atan(cartCoords.z / cartCoords.x);
-		if (cartCoords.x < 0)
-			outPolar += Mathf.PI;
-		outElevation = Mathf.Asin(cartCoords.y / outRadius);
-	}
-
-	public static void SphericalToCartesian(float radius, float polar, float elevation, out Vector3 outCart){
-		float a = radius * Mathf.Cos(elevation);
-		outCart.x = a * Mathf.Cos(polar);
-		outCart.y = radius * Mathf.Sin(elevation);
-		outCart.z = a * Mathf.Sin(polar);
+		if(PdManager.Instance.pdDsp)
+			Disable ();
 	}
 
 	// Update is called once per frame
@@ -181,10 +162,6 @@ public class HRIRu : MonoBehaviour {
 				azimuth = 360 - azimuth;
 			}
 			Update_Azimuth (azimuth);
-			//Debug.Log (azimuth.ToString()+"\t"+elevation.ToString()+"\t"+(Mathf.Abs (Vector3.Distance (transform.position,listener.transform.position))*scale).ToString());
-			/*Vector3 tmp;
-			SphericalToCartesian (Mathf.Abs (Vector3.Distance (transform.position,listener.transform.position))*scale,azimuth,elevation,out tmp);
-			Debug.Log (tmp.ToString()+"\t"+transform.position.ToString());*/
 		}
 	}
 }

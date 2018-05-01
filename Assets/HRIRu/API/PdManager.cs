@@ -9,48 +9,36 @@ using LibPDBinding.Managed.Data;
 using LibPDBinding.Managed.Events;
 
 public class PdManager : MonoBehaviour {
-
-	/// <summary>
-	/// The number of input channels to spatializer, if it is greater than 0, it will start to listen the Mic_Device, the recommended value is 1 to listen mono signal of the microphone.
-	/// </summary>
-	public int numberOfInputChannel = 0;
-	/// <summary>
-	/// The number of output channels from spatializer, the recommended value is 2, HRIR spatializer is focus to stereo systems.
-	/// </summary>
-	public int numberOfOutputChannel = 2;
+	
+	private int numberOfInputChannel = 0; //The number of input channels to spatializer, if it is greater than 0, it will start to listen the Mic_Device, the recommended value is 1 to listen mono signal of the microphone.
+	private int numberOfOutputChannel = 2;//The number of output channels from spatializer, the recommended value is 2, HRIR spatializer is focus to stereo systems.
 	/// <summary>
 	/// Mixers to put the processed audio.
 	/// </summary>
 	public AudioMixerGroup[] targetMixerGroups;
 	/// <summary>
-	/// Start computing audio.
+	/// State of Dsp of Pure-data instance, True if audio is computing, false in otherwise.
+	/// If script init with pdDsp true, they start computing audio from Pure-data.
 	/// </summary>
-	public bool startDspOnStart = false;
+	public bool pdDsp = true;// Is computing audio?.
 	private Pd PD; //Instance of pure data
+	private Patch manager; //Patch of PdManager
+	private string HRIRuPath="";// Path of the API HRIRu.
 	/// <summary>
-	/// Path of the API HRIRu.
+	/// This variable indicates the state of microphone divice, true if is recording and false in otherwise.
 	/// </summary>
-	private string HRIRuPath="";
-	/// <summary>
-	/// Is computing audio?.
-	/// </summary>
-	public bool pdDsp = true;
-	/// <summary>
-	/// Is recording from Mic_Device?.
-	/// </summary>
-	public bool isRecording=false;
+	public bool useMic=false;
 	private List<Patch> _loadedPatches = new List<Patch>(); //All patches loaded
 	private GameObject pdMixer; //Mixer object
 	/// <summary>
 	/// Microphone device to take a signal to spatializer, if it is null, it will take the default microphone for unity.
 	/// </summary>
-	public string Mic_Device=""; //Microsoft® LifeCam HD-5000 //Logitech USB Headset
+	public string Mic_Device="";
 
 	//
 	private AudioClip Mic; //Class to recording from microphone.
 	private bool Is_Device=false; //Exists this device.
 	private float[] PDMic_Input; //Buffer given from microphone.
-	private int Ni = 0; //Temporal variable to save number of inputs.
 	//
 
 	private static PdManager _instance;
@@ -61,6 +49,20 @@ public class PdManager : MonoBehaviour {
 		{
 			return _instance;
 		}
+	}
+	/// <summary>
+	/// This functions returns the input channels for microphone.
+	/// </summary>
+	/// <returns> Number of input channels. </returns>
+	public int getNumberInputs(){
+		return numberOfInputChannel;
+	}
+	/// <summary>
+	/// This functions returns the output channels for microphone.
+	/// </summary>
+	/// <returns> Number of output channels. </returns>
+	public int getNumberOutputs(){
+		return numberOfOutputChannel;
 	}
 	/// <summary>
 	/// This fuctions returns the HRIRu path.
@@ -118,8 +120,8 @@ public class PdManager : MonoBehaviour {
 	/// <summary>
 	/// Function to change state of process audio.
 	/// </summary>
-	/// <param name="state">True to put available audio, false to disable audio.</param>
-	public void Compute(bool state){
+	/// <param name="state">True to put available audio, false to disable audio. Default is true.</param>
+	public void Compute(bool state=true){
 		if (state) {
 			PD.Start ();
 			pdDsp = true;
@@ -137,8 +139,6 @@ public class PdManager : MonoBehaviour {
 	/// <returns> Buffer of audio processed from pure data. </returns>
 	public void Process_Audio(int length,int channels,float[] input,float[] output){
 		PD.Process ((int)(length / PD.BlockSize / channels), input, output);
-		//Debug.Log(length.ToString()+" "+PD.BlockSize.ToString()+" "+channels.ToString());
-		//PD.Process (16, input, output);
 	}
 
 	//Create a mixer.
@@ -157,7 +157,7 @@ public class PdManager : MonoBehaviour {
 		}
 		DontDestroyOnLoad (pdMixer);
 	}
-
+	//Set up the instance of Pure-data
 	void Awake()
 	{
 		if (_instance == null) {
@@ -166,20 +166,21 @@ public class PdManager : MonoBehaviour {
 			HRIRuPath=Path.GetDirectoryName(System.IO.Directory.GetFiles(Application.dataPath, "HRIRu.cs", SearchOption.AllDirectories)[0])+Path.DirectorySeparatorChar+".."+Path.DirectorySeparatorChar;
 			PD=new Pd(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {HRIRuPath+"StreamingAssets"});
 			//Uses this to get prints of Pure Data
-			PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
+			/*PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
 				Debug.Log(e.Symbol.Value);
-			};
-			OpenNewPdPatch(HRIRuPath+"StreamingAssets"+Path.DirectorySeparatorChar+"pdManager.pd");
+			};*/
+			manager=PD.LoadPatch(HRIRuPath+"StreamingAssets"+Path.DirectorySeparatorChar+"pdManager.pd");
 			if (numberOfOutputChannel != targetMixerGroups.Length * 2) {
 				Debug.LogWarning ("The number of output channel is not equal to the number of mixer group!");
 				Debug.LogWarning ("Set number of output channel to " + (targetMixerGroups.Length * 2).ToString ());
 				numberOfOutputChannel = targetMixerGroups.Length * 2;
 			}
 			createPdMixer ();
-			if (startDspOnStart) {
+			if (pdDsp) {
 				PD.Start ();
-				pdDsp = true;
 			}
+			if(useMic)
+				Avaible_Mic();
 		} else if (!Instance.Equals((object)this)){
 			Destroy (gameObject);
 		}
@@ -189,33 +190,27 @@ public class PdManager : MonoBehaviour {
 	/// Function to start record from Mic_Device.
 	/// </summary>
 	public void Avaible_Mic(){
-		if(numberOfInputChannel<=0){
-			numberOfInputChannel = Ni;
-		}
-		if (numberOfInputChannel > 0) {
-			Is_Device = false;
-			foreach (string device in Microphone.devices) {
-				if(Mic_Device==device){
-					Is_Device = true;
-					break;
-				}
+		numberOfInputChannel = 1;
+		Is_Device = false;
+		foreach (string device in Microphone.devices) {
+			if(Mic_Device==device){
+				Is_Device = true;
+				break;
 			}
-			if (!Is_Device)
-				Mic = null;
-			Mic = Microphone.Start(Mic_Device, true, 3, AudioSettings.outputSampleRate);
-			//PDMic_Input=new float[Mic.samples * Mic.channels];
-			PDMic_Input=new float[1024*numberOfInputChannel];
-			isRecording = true;
 		}
+		if (!Is_Device)
+			Mic = null;
+		Mic = Microphone.Start(Mic_Device, true, 3, AudioSettings.outputSampleRate);
+		PDMic_Input=new float[1024*numberOfInputChannel];
+		useMic = true;
 	}
 	/// <summary>
 	/// Function to stop record from Mic_Device.
 	/// </summary>
 	public void Disable_Mic(){
 		Microphone.End (Mic_Device);
-		Ni = numberOfInputChannel;
 		numberOfInputChannel = 0;
-		isRecording = false;
+		useMic = false;
 	}
 	/// <summary>
 	/// Function to get a buffer from Mic_Device.
@@ -230,12 +225,18 @@ public class PdManager : MonoBehaviour {
 		}
 		return PDMic_Input;
 	}
-
-	void Start () {
-		Avaible_Mic();
+	//Close all patchs open at the moment and release the memory of instance of Pure-datas
+	private void Close(){
+		foreach (Patch patch in _loadedPatches) {
+			patch.Dispose ();
+		}
+		_loadedPatches.Clear ();
+		manager.Dispose ();
+		PD.Dispose ();
+		pdDsp = false;
 	}
 		
 	void OnApplicationQuit(){
-		PD.Dispose ();
+		Close ();
 	}
 }

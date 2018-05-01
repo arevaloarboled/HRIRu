@@ -25,13 +25,13 @@ public class PdStereo : MonoBehaviour {
 
 		if (pullDataFromPd) {
 			//AudioSource aud = GetComponent<AudioSource>();
-			if (PdManager.Instance.numberOfInputChannel > 0) {
+			if (PdManager.Instance.getNumberInputs() > 0) {
 				PdInput=PdManager.Instance.Get_Audio_Mic();
 			} else {
 				PdInput = new float[0];
 			}
-			if (PdManager.Instance.numberOfOutputChannel > 0)
-				PdOutput = new float[(int)(data.Length / channels * PdManager.Instance.numberOfOutputChannel)];
+			if (PdManager.Instance.getNumberOutputs() > 0)
+				PdOutput = new float[(int)(data.Length / channels * PdManager.Instance.getNumberOutputs())];
 			else
 				PdOutput = new float[0];
 			PdManager.Instance.Process_Audio(data.Length, channels, PdInput,PdOutput);
@@ -40,7 +40,10 @@ public class PdStereo : MonoBehaviour {
 		if (PdManager.Instance != null) {
 			for (int i = 0; i < data.Length / channels; i++) {
 				for (int j = 0; j < selectedChannels.Length; j++) {
-					data [(i * channels) + j] =(data [(i * channels) + j] + PdOutput [(i * PdManager.Instance.numberOfOutputChannel) + selectedChannels [j]])/2;
+					//Use to marge into channel mixer with others sounds
+					//data [(i * channels) + j] =(data [(i * channels) + j] + PdOutput [(i * PdManager.Instance.numberOfOutputChannel) + selectedChannels [j]])/2;
+					//Use for merge into channel dedicate for Pure-data
+					data [(i * channels) + j] =PdOutput [(i * PdManager.Instance.getNumberOutputs()) + selectedChannels [j]];
 				}
 			}
 		}
