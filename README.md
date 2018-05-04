@@ -77,7 +77,7 @@ This script would be added to sounds source objects located near to a scene list
 ### Methods
 
 |Function | Parameters | Description
-|-----------|---------------|----------|------------------------|
+|-----------|-------------------------|------------------------|
 |`Volume`  | `float f` | This function changes the volume for input of the spatializer, By default is set to 1, the maximum value is 10.|
 |`Play`  | `string song` | This function loads a WAV file and plays it just once, the `song` parameter specified the path of the WAV file.|
 |`Play_Loop`  | `string song` | This function loads a WAV file and plays it in a loop, the `song` parameter specified the path of the WAV file.|
