@@ -1,31 +1,31 @@
+
 <p align="center"> <img src="https://goo.gl/gPNg5w" width="100"/> </p>
 <p align="center">
     <a href="https://unity3d.com/es/unity" target="_blank">
         <img src="https://img.shields.io/badge/Unity-2017.4.1-blue.svg" alt="Unity 2017.4.1">
     </a>
     <a href="https://puredata.info/" target="_blank">
-        <img src="https://img.shields.io/badge/Pure_Data-0.48--0-green.svg" alt="Pure Data 0.48">
+        <img src="https://img.shields.io/badge/Pure_Data-0.48--1-green.svg" alt="Pure Data 0.48">
     </a>
     <a href="https://github.com/libpd/libpd/" target="_blank">
         <img src="https://img.shields.io/badge/Libpd-C%23-brightgreen.svg" alt="Libpd C#">
     </a>
 </p>
 
-HRIRu is an API for spatialize sound sources in Unity engine, using [hrir~](http://onkyo.u-aizu.ac.jp/index.php/software/hrir/) , a sound spatializer developed in Pure Data capable of spatialization between distance $20 \leqslant d \leqslant 160$ cm, azimuth $0^o \leqslant \theta \leqslant 360^o$, and elevation $-40^o \leqslant \phi \leqslant 90^o$.
-
+HRIRu is an API for accurate 3D sound spatializer for a near field of listener in Unity engine focused for VR, using [hrir~](http://onkyo.u-aizu.ac.jp/index.php/software/hrir/) , a sound spatializer developed in Pure Data capable of spatialization between distance $20 \leqslant d \leqslant 160$ cm, azimuth $0^o \leqslant \theta \leqslant 360^o$, and elevation $-40^o \leqslant \phi \leqslant 90^o$.
 
 This implementacion is based on [UnityLibpd](https://github.com/Wilsonwaterfish/UnityLibpd) by Wing Sang Wong, using the C# API of Libpd to embed Pure Data in Unity.
 
 # Getting start
 
-This API is tested in Unity 2017.4.1f1, to get it, just copy the files in an Editor directory within your unity Assets folder.
+This API is tested in Unity 2017.4.1, to get it, just copy the files in an Editor directory within your unity Assets folder.
 
-For the moment, this API only works for MacOS.
+At the moment, this API only works for MacOS.
 >If you are using Plugins in your project, mind that HRIRu have the own Plugins directory, so, you can move the files of this directory in your own Plugins directory.
 
 # Usage
 
-The API has 2 scripts, a Manager as a control of Pure Data instance and HRIRu, for a sound source object.
+The API has 2 scripts (located in the API directory), a Manager as a control of Pure Data instance and HRIRu for a sound source object.
 
 ## PdManager
 
@@ -47,7 +47,7 @@ Following the idea of [UnityLibpd](https://github.com/Wilsonwaterfish/UnityLibpd
 
 |Function | Parameters | Description
 |-----------|--------------------|-----------------------------|
-|`Compute`  | `bool state`: default is true | This function change state of DSP in Pure Data, if the parameter is true it put available compute audio from Pure Data, in otherwise, you can put false.|
+|`Compute`  | `bool state`: Default is true | This function change state of DSP in Pure Data, if the parameter is true it put available compute audio from Pure Data, in otherwise, you can put false.|
 |`Avaible_Mic`  | Not parameters | This function set up the microphone specified in `Mic Device` as an input signal for Pure Data. Note: the sample rate by default in unity is 48000 Hz.|
 |`Disable_Mic`  | Not parameters | This function quiet a microphone as an input signal for Pure Data.|
 >All of these methods return void.
@@ -72,7 +72,7 @@ This script would be added to sounds source objects located near to a scene list
 |-------------------------------|-----------------------------|
 |Scale           | Is a scale of the distance from the listener object to sound source, according to the units used to define the geometry of objects. By default is 1.|
 |Listener        | This propierty specified the listener in the scene, by default is the Audio Listener in the scene.|
-|isPlaying       | This property says the state of the sound spatializer, if is true, it computes for all `Update` times the coordinates from the listener object and processes the audio in Pure Data, false in otherwise.|
+|isPlaying       | This property says the state of the sound spatializer, if is true, it is computed for all called of `Update` function the coordinates from the listener object and processes the audio in Pure Data, false in otherwise.|
 
 ### Methods
 
@@ -88,10 +88,30 @@ This script would be added to sounds source objects located near to a scene list
 
 >The path of WAV song files start in the Assets directory, so, if you want to play a song.wav in a Sounds/ directory into Assets folder, you call HRIRu.Play("Sounds/song.wav").
 
-In the code, to access these methods and properties in a sound source object, do it as follows:
+In the code, to access these methods and properties in a *sound source object*, do it as follows:
 
 ```csharp
 HRIRu hrir_control=this.GetComponent<HRIRu>();
 hrir_control.Available();
 hrir_control.Play("Sounds/song.wav");
 ```
+# Demo
+
+In a branch of this repository, there is a [demo](https://github.com/arevaloarboled/HRIRu/tree/demo). In this demo, an object with a sound musical box and orbit the listener's head movement determinate by a Lissajous curve. You can download it and import as a project in Unity and use the TestHRIR scene to see a demo.
+# Libpd
+
+This  API uses libpd to create an interface between a Pure Data program and Unity. Libpd is a wrapper that turns Pure-data programs into an embeddable audio library. Libpd has APIs for C/C++, Objective-C, C#, Java, and Python. We used the C# API in libpd to integrate Pure-data programs in Unity.
+
+At the moment,  Plug-ins included is for MacOS (.bundle) and for Linux (.so), in the case to have any problem with these Plug-ins in your OS, you would need to recompile the libpdcsharp, the exact version of Libpd used in this implementation is in [this commit of Libpd repository](https://github.com/libpd/libpd/tree/d4cc735c0f330aaed9fd4cec204089abb466ec5f). For MacOS, when you compile the .dylib, you need to change the extension to .bundle to use into Unity.
+
+
+
+# hrir~
+
+
+This implementation is focused on use `hrir~`, real-time system for sound spatialization via headphones, the spatializer is built in C as an external library of Pure Data created by Julian Villegas. `hrir~` convolve the sound sources with a binaural head-related impulse response (HRIR) measurements stored in a SQLite database, in which includes the records with different distances and locations on a spherical surface.
+
+`hrir~` use a specific database depending on the sample rate used on the sound source, this API  includes the database for 44100 Hz and 48000 Hz, if necessary another sample rate, you need take account the others sample rates available of hrir~, that you can find in the [hrir~repository](http://onkyo.u-aizu.ac.jp/index.php/software/hrir/). Since HRIRu use the sample rate using in Unity (by default 48000Hz), it is advisable that all sound sources would be in this sample rate. 
+
+>The `hrir~` patch and databases are located in StreamingAssets directory.
+
