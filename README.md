@@ -12,7 +12,7 @@
     </a>
 </p>
 
-HRIRu is an API for accurate 3D sound spatializer for a near field of listener in Unity engine focused for VR, using [hrir~](http://onkyo.u-aizu.ac.jp/index.php/software/hrir/) , a sound spatializer developed in Pure Data capable of spatialization between distance $20 \leqslant d \leqslant 160$ cm, azimuth $0^o \leqslant \theta \leqslant 360^o$, and elevation $-40^o \leqslant \phi \leqslant 90^o$.
+HRIRu is an API for accurate 3D sound spatializer for a near field of listener in Unity engine focused for VR, using [hrir~](http://onkyo.u-aizu.ac.jp/index.php/software/hrir/) , a sound spatializer developed in Pure Data capable of spatialization between distance 20 ⩽ d ⩽ 160 cm, azimuth 0° ⩽ θ ⩽ 360°, and elevation -40° ⩽ ϕ ⩽ 90°.
 
 This implementacion is based on [UnityLibpd](https://github.com/Wilsonwaterfish/UnityLibpd) by Wing Sang Wong, using the C# API of Libpd to embed Pure Data in Unity.
 
