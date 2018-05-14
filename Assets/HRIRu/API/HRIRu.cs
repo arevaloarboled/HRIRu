@@ -144,7 +144,7 @@ public class HRIRu : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 		if(_isPlaying){
 			//Calculate distance between listener and sound source	
 			Update_Distance (Mathf.Abs (Vector3.Distance (transform.position,listener.transform.position))*scale);				

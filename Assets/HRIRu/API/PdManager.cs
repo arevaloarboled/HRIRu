@@ -13,9 +13,10 @@ public class PdManager : MonoBehaviour {
 	private int numberOfInputChannel = 0; //The number of input channels to spatializer, if it is greater than 0, it will start to listen the Mic_Device, the recommended value is 1 to listen mono signal of the microphone.
 	private int numberOfOutputChannel = 2;//The number of output channels from spatializer, the recommended value is 2, HRIR spatializer is focus to stereo systems.
 	/// <summary>
-	/// Mixers to put the processed audio.
+	/// Mixers to the ouput signal processed by Pure data.
 	/// </summary>
-	public AudioMixerGroup[] targetMixerGroups;
+	public AudioMixerGroup MixerChannel;
+	private GameObject MixerObject; //Object where is attached the Mixer channel, because GameObject cant has AudioListener and AudioSource
 	/// <summary>
 	/// State of Dsp of Pure-data instance, True if audio is computing, false in otherwise.
 	/// If script init with pdDsp true, they start computing audio from Pure-data.
@@ -24,12 +25,12 @@ public class PdManager : MonoBehaviour {
 	private Pd PD; //Instance of pure data
 	private Patch manager; //Patch of PdManager
 	private string HRIRuPath="";// Path of the API HRIRu.
+	private List<Patch> _loadedPatches = new List<Patch>(); //All patches loaded
 	/// <summary>
-	/// This variable indicates the state of microphone divice, true if is recording and false in otherwise.
+	/// This variable indicates if the instance of pure data start with micrhophone or not.
+	/// Also, it indicates the state of microphone divice, true if is recording and false in otherwise.
 	/// </summary>
 	public bool useMic=false;
-	private List<Patch> _loadedPatches = new List<Patch>(); //All patches loaded
-	private GameObject pdMixer; //Mixer object
 	/// <summary>
 	/// Microphone device to take a signal to spatializer, if it is null, it will take the default microphone for unity.
 	/// </summary>
@@ -51,7 +52,8 @@ public class PdManager : MonoBehaviour {
 		}
 	}
 	/// <summary>
-	/// This functions returns the input channels for microphone.
+	/// This functions returns the input channels for microphone, if it is greater than 0 means that pure data 
+	/// is using the microphone as input.
 	/// </summary>
 	/// <returns> Number of input channels. </returns>
 	public int getNumberInputs(){
@@ -141,21 +143,13 @@ public class PdManager : MonoBehaviour {
 		PD.Process ((int)(length / PD.BlockSize / channels), input, output);
 	}
 
-	//Create a mixer.
+	//Attach the mixer to MixerObject.
 	private void createPdMixer(){
-		pdMixer = new GameObject ("PdMixer");
-		for(int i=0;i<numberOfOutputChannel/2;++i){
-			GameObject newGroup = new GameObject (targetMixerGroups [i].name);
-			PdStereo pdStereo = newGroup.AddComponent<PdStereo> ();
-			newGroup.AddComponent<AudioSource> ();
-			pdStereo.selectedChannels [0] = i * 2;
-			pdStereo.selectedChannels [1] = (i * 2) + 1;
-			pdStereo.setMixerGroup (targetMixerGroups [i]);
-			if (i == 0)
-				pdStereo.pullDataFromPd = true;
-			newGroup.transform.parent = pdMixer.transform;
-		}
-		DontDestroyOnLoad (pdMixer);
+		MixerObject = new GameObject ();
+		MixerObject.AddComponent<PdStereo>();
+		if (MixerObject.GetComponent<AudioSource> () == null)
+			MixerObject.AddComponent<AudioSource>();
+		MixerObject.GetComponent<PdStereo>().setMixerGroup(MixerChannel);
 	}
 	//Set up the instance of Pure-data
 	void Awake()
@@ -170,11 +164,8 @@ public class PdManager : MonoBehaviour {
 				Debug.Log(e.Symbol.Value);
 			};*/
 			manager=PD.LoadPatch(HRIRuPath+"StreamingAssets"+Path.DirectorySeparatorChar+"pdManager.pd");
-			if (numberOfOutputChannel != targetMixerGroups.Length * 2) {
-				Debug.LogWarning ("The number of output channel is not equal to the number of mixer group!");
-				Debug.LogWarning ("Set number of output channel to " + (targetMixerGroups.Length * 2).ToString ());
-				numberOfOutputChannel = targetMixerGroups.Length * 2;
-			}
+			if (MixerChannel == null)
+				Debug.LogWarning ("Not found mixer channel...");
 			createPdMixer ();
 			if (pdDsp) {
 				PD.Start ();
