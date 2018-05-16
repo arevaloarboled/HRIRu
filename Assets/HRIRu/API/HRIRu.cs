@@ -168,7 +168,6 @@ public class HRIRu : MonoBehaviour {
 				azimuth = 360f + azimuth;
 			}
 			Update_Azimuth (azimuth);
-			Debug.Log ("E:\t"+elevation.ToString()+" A:\t"+azimuth.ToString());
 		}
 	}
 }
