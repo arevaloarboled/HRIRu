@@ -150,18 +150,25 @@ public class HRIRu : MonoBehaviour {
 			Update_Distance (Mathf.Abs (Vector3.Distance (transform.position,listener.transform.position))*scale);				
 			//Calculate diretion vector between listener and sound source	
 			Vector3 dir=(transform.position-listener.transform.position).normalized;
-			//Calculate angle of elevation between listener and sound source	
-			float elevation=Vector3.Angle(new Vector3(listener.transform.forward.x,dir.y,listener.transform.forward.z),listener.transform.forward);
-			if(listener.transform.forward.x*dir.y-(listener.transform.forward.y*dir.x)>0){ //use determinant to know the direction of elevation
-				elevation = -elevation;
+			//Calculate angle of elevation between listener and sound source
+			Vector3 dirE=Vector3.ProjectOnPlane (dir, listener.transform.right);
+			float elevation = Vector3.SignedAngle (listener.transform.forward, dirE, listener.transform.right);
+			elevation = -elevation;
+			if (elevation<-90f) {
+				elevation = 90 + (elevation % -90);
+			}
+			if (elevation > 90f) {
+				elevation = 90 - (elevation % 90);
 			}
 			Update_Elevation (elevation);
 			//Calculate angle of azimuth between listener and sound source
-			float azimuth=Vector3.Angle(new Vector3(dir.x,listener.transform.forward.y,dir.z),listener.transform.forward);
-			if(listener.transform.forward.x*dir.z-(listener.transform.forward.z*dir.x)<0){ //use determinant to know the direction of azimuth
-				azimuth = 360 - azimuth;
+			Vector3 dirA=Vector3.ProjectOnPlane (dir, listener.transform.up);
+			float azimuth = Vector3.SignedAngle (listener.transform.forward, dirA, listener.transform.up);
+			if (azimuth < 0f) {
+				azimuth = 360f + azimuth;
 			}
 			Update_Azimuth (azimuth);
+			Debug.Log ("E:\t"+elevation.ToString()+" A:\t"+azimuth.ToString());
 		}
 	}
 }
