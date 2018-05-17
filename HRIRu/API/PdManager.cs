@@ -16,7 +16,7 @@ public class PdManager : MonoBehaviour {
 	/// Mixers to the ouput signal processed by Pure data.
 	/// </summary>
 	public AudioMixerGroup MixerChannel;
-	private GameObject MixerObject; //Object where is attached the Mixer channel, because GameObject cant has AudioListener and AudioSource
+	private GameObject PdMixer; //Object where is attached the Mixer channel, because GameObject cant has AudioListener and AudioSource
 	/// <summary>
 	/// State of Dsp of Pure-data instance, True if audio is computing, false in otherwise.
 	/// If script init with pdDsp true, they start computing audio from Pure-data.
@@ -145,11 +145,12 @@ public class PdManager : MonoBehaviour {
 
 	//Attach the mixer to MixerObject.
 	private void createPdMixer(){
-		MixerObject = new GameObject ();
-		MixerObject.AddComponent<PdStereo>();
-		if (MixerObject.GetComponent<AudioSource> () == null)
-			MixerObject.AddComponent<AudioSource>();
-		MixerObject.GetComponent<PdStereo>().setMixerGroup(MixerChannel);
+		PdMixer = new GameObject ("PdMixer");
+		PdMixer.AddComponent<PdStereo>();
+		if (PdMixer.GetComponent<AudioSource> () == null)
+			PdMixer.AddComponent<AudioSource>();
+		PdMixer.GetComponent<PdStereo>().setMixerGroup(MixerChannel);
+		DontDestroyOnLoad (PdMixer);
 	}
 	//Set up the instance of Pure-data
 	void Awake()
@@ -160,9 +161,9 @@ public class PdManager : MonoBehaviour {
 			HRIRuPath=Path.GetDirectoryName(System.IO.Directory.GetFiles(Application.dataPath, "HRIRu.cs", SearchOption.AllDirectories)[0])+Path.DirectorySeparatorChar+".."+Path.DirectorySeparatorChar;
 			PD=new Pd(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {HRIRuPath+"StreamingAssets"});
 			//Uses this to get prints of Pure Data
-			/*PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
+			PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
 				Debug.Log(e.Symbol.Value);
-			};*/
+			};
 			manager=PD.LoadPatch(HRIRuPath+"StreamingAssets"+Path.DirectorySeparatorChar+"pdManager.pd");
 			if (MixerChannel == null)
 				Debug.LogWarning ("Not found mixer channel...");
@@ -171,7 +172,7 @@ public class PdManager : MonoBehaviour {
 				PD.Start ();
 			}
 			if(useMic)
-				Avaible_Mic();
+				Available_Mic();
 		} else if (!Instance.Equals((object)this)){
 			Destroy (gameObject);
 		}
@@ -180,7 +181,7 @@ public class PdManager : MonoBehaviour {
 	/// <summary>
 	/// Function to start record from Mic_Device.
 	/// </summary>
-	public void Avaible_Mic(){
+	public void Available_Mic(){
 		numberOfInputChannel = 1;
 		Is_Device = false;
 		foreach (string device in Microphone.devices) {

@@ -152,10 +152,9 @@ public class HRIRu : MonoBehaviour {
 			Vector3 dir=(transform.position-listener.transform.position).normalized;
 			//Calculate angle of elevation between listener and sound source
 			Vector3 dirE=Vector3.ProjectOnPlane (dir, listener.transform.right);
-			float elevation = Vector3.SignedAngle (listener.transform.forward, dirE, listener.transform.right);
-			elevation = -elevation;
+			float elevation = - Vector3.SignedAngle (listener.transform.forward, dirE, listener.transform.right);
 			if (elevation<-90f) {
-				elevation = 90 + (elevation % -90);
+				elevation = -90-(elevation % 90);
 			}
 			if (elevation > 90f) {
 				elevation = 90 - (elevation % 90);
@@ -163,11 +162,12 @@ public class HRIRu : MonoBehaviour {
 			Update_Elevation (elevation);
 			//Calculate angle of azimuth between listener and sound source
 			Vector3 dirA=Vector3.ProjectOnPlane (dir, listener.transform.up);
-			float azimuth = Vector3.SignedAngle (listener.transform.forward, dirA, listener.transform.up);
+			float azimuth = - Vector3.SignedAngle (listener.transform.forward, dirA, listener.transform.up);
 			if (azimuth < 0f) {
 				azimuth = 360f + azimuth;
 			}
 			Update_Azimuth (azimuth);
+			//Debug.Log ("E: "+elevation.ToString()+"\tA: "+azimuth.ToString());
 		}
 	}
 }
