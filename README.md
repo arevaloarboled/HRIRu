@@ -48,7 +48,7 @@ Following the idea of [UnityLibpd](https://github.com/Wilsonwaterfish/UnityLibpd
 |Function | Parameters | Description
 |-----------|--------------------|-----------------------------|
 |`Compute`  | `bool state`: Default is true | This function change state of DSP in Pure Data, if the parameter is true it put available compute audio from Pure Data, in otherwise, you can put false.|
-|`Avaible_Mic`  | Not parameters | This function set up the microphone specified in `Mic Device` as an input signal for Pure Data. Note: the sample rate by default in unity is 48000 Hz.|
+|`Available_Mic`  | Not parameters | This function set up the microphone specified in `Mic Device` as an input signal for Pure Data. Note: the sample rate by default in unity is 48000 Hz.|
 |`Disable_Mic`  | Not parameters | This function quiet a microphone as an input signal for Pure Data.|
 >All of these methods return void.
 
