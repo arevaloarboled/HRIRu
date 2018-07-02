@@ -1,4 +1,4 @@
-#N canvas -892 362 450 300 10;
+#N canvas 300 386 450 300 10;
 #X obj 84 169 dac~;
 #X obj 105 127 catch~ out2;
 #X obj 84 106 catch~ out1;

@@ -33,8 +33,8 @@ public class drone_script : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		if(Input.GetKeyDown(KeyCode.Space) && !start_with_hrir){
+	void Update () {        
+        if (Input.GetKeyDown(KeyCode.Space) && !start_with_hrir){
 			if (spatializer) {
 				Debug.Log ("Changing to unity spatializer...");
 				hrir_control.Disable ();
