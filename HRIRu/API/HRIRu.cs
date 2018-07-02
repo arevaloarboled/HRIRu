@@ -110,9 +110,9 @@ public class HRIRu : MonoBehaviour {
 	/// Dispose sound spatializer for sound sources object
 	/// </summary>
 	public void Available(){
-		if (scale <= 0f)	scale=1f;
-		dollarzero = PdManager.Instance.OpenNewPdPatch (PdManager.Instance.APIPath()+"StreamingAssets"+Path.DirectorySeparatorChar+pdPatchName);
-		Volume (1f);
+		if (scale <= 0f)	scale=1f;        
+        dollarzero = PdManager.Instance.OpenNewPdPatch (PdManager.Instance.APIPath()+pdPatchName);        
+        Volume (1f);
 		if(listener==null){
 			//Seek audio listeners in scene
 			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();
