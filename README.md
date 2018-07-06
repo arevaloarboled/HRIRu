@@ -18,37 +18,37 @@ This implementacion is based on [UnityLibpd](https://github.com/Wilsonwaterfish/
 
 # Getting start
 
-This API is tested in Unity 2017.4.1, to get it, just copy the files in an Editor directory within your unity Assets folder.
+This API is tested in Unity 2017.4.1, to get it, just copy the files in an Editor directory within your unity Assets folder. In the `StreamingAssets`, the `HRIRu` path is located, this folder contains the Pure Data programs and external objects. Thus, is necessary to stay directly in the Assets path with the same directory name in order to the API could load the resource for HRIRu. Also, any `wav` files that you want to load in HRIRu needs to be in the `StreamingAssets` path. 
 
 At the moment, this API only works for MacOS.
 >If you are using Plugins in your project, mind that HRIRu have the own Plugins directory, so, you can move the files of this directory in your own Plugins directory.
 
 # Usage
 
-The API has 2 scripts (located in the API directory), a Manager as a control of Pure Data instance and HRIRu for a sound source object.
+The API has 2 scripts (located in the HRIRu directory), a Manager as a control of Pure Data instance and HRIRu for a sound source object.
 
 ## PdManager
 
 Following the idea of [UnityLibpd](https://github.com/Wilsonwaterfish/UnityLibpd), PdManager is the main interface of Pure Data, it requires to be added in the scene to an object without destroyer method (e.g., a camera object).
 
 <p align="center">
-<img src="https://goo.gl/Yux9qU" width="200">
+<img src="https://goo.gl/AJZD4w" width="200">
 </p>
 
 ### Properties
 |Propiertie                          |Description
 |-------------------------------|-----------------------------|
-|Target Mixer Groups            | In the Element0 put the audio mixer group that you want to get output of spatialized audio, this channel would be only used for this purpose. |
+|Mixer Channel            | The audio mixer that you want to get output of spatialized audio, this channel would be only used for this purpose. |
 |Pd Dsp            |This propiertie say the state of DPS for instance of Pure Data. If you check this, the PdManager start to process the signal audio when this object is instantiated, in otherwise, you need to start the DSP with `compute` function.|
-|Use Mic            |If you check this, the PdManager start to get audio signal from Microphone specified in `Mic Device`, in otherwise, you can start to use the microphone with `Avaible_Mic` function.|
+|Start With Mic            |If you check this, the PdManager start to get audio signal from Microphone specified in `Mic Device`, in otherwise, you can start to use the microphone with `Avaible_Mic` function.|
 |Mic Device            |This especified the device to get microphone signal, in otherwise, it use the defualt microphone for Unity.|
 
 ### Methods
 
 |Function | Parameters | Description
 |-----------|--------------------|-----------------------------|
-|`Compute`  | `bool state`: Default is true | This function change state of DSP in Pure Data, if the parameter is true it put available compute audio from Pure Data, in otherwise, you can put false.|
-|`Available_Mic`  | Not parameters | This function set up the microphone specified in `Mic Device` as an input signal for Pure Data. Note: the sample rate by default in unity is 48000 Hz.|
+|`Compute`  | `bool state`; Default is true | This function change state of DSP in Pure Data, if the parameter is true it put available compute audio from Pure Data, in otherwise, you can put false.|
+|`Available_Mic`  | `string Device` | This function set up the microphone specified in `Device`, in otherwise, use the `Mic Device` as an input signal for Pure Data. Note: the sample rate by default in unity is 48000 Hz.|
 |`Disable_Mic`  | Not parameters | This function quiet a microphone as an input signal for Pure Data.|
 >All of these methods return void.
 
@@ -86,7 +86,7 @@ This script would be added to sounds source objects located near to a scene list
 |`Available`  | No parameters| This functions set up the spatializer for a sound source. By default, the spatializer is not instantiated, so, it is necessary to use for start the spatializer.|
 |`Disable`  | No parameters| This function disables the spatializer and removes the memory load from it.|
 
->The path of WAV song files start in the Assets directory, so, if you want to play a song.wav in a Sounds/ directory into Assets folder, you call HRIRu.Play("Sounds/song.wav").
+>The path of WAV song files needs to be in the `StreamingAssets` path, so, if you want to play a song.wav in a Sounds/ directory into Assets/StreamingAssets/ folder, you call HRIRu.Play("Sounds/song.wav").
 
 In the code, to access these methods and properties in a *sound source object*, do it as follows:
 

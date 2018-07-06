@@ -27,6 +27,9 @@ public class PdStereo : MonoBehaviour {
         while (!(Microphone.GetPosition(null) > 0)) { }
         Mic.Play();        
     }
+    /// <summary>
+    /// Function to disable Mic_Device.    
+    /// </summary>
     public void DisableMicrophone()
     {
         Microphone.End(Device);

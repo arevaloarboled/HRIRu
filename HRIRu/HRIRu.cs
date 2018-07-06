@@ -37,16 +37,16 @@ public class HRIRu : MonoBehaviour {
 	/// </summary>
 	/// <param name="song">Is the path song from the assets folder</param>
 	/// <returns> Returns true if song is load successfully </returns>
-	public bool Load_Audio(string song){
+	private bool Load_Audio(string song){
 		if (!_isPlaying)
 			return false;
 		string[] splt = song.Split ('.');
-		if(!File.Exists(Application.dataPath+Path.DirectorySeparatorChar+song) || splt[splt.Length-1]!="wav" )
+		if(!File.Exists(Path.Combine(Application.streamingAssetsPath,song)) || splt[splt.Length-1]!="wav" )
 		{
 			Debug.LogWarning ("Error, Can't load file ["+song+"], it's not wav or file not exist");
 			return false;
 		}
-		PdManager.Instance.Send(dollarzero.ToString ()+"-Load",Application.dataPath+Path.DirectorySeparatorChar+song);
+		PdManager.Instance.Send(dollarzero.ToString ()+"-Load", Path.Combine(Application.streamingAssetsPath, song));
 		return true;
 	}
 	/// <summary>
@@ -57,24 +57,34 @@ public class HRIRu : MonoBehaviour {
 		if(!Load_Audio(song)){
 			return;
 		}
-		PdManager.Instance.Send(dollarzero.ToString ()+"-Play");
-	}
+        PdManager.Instance.Send(dollarzero.ToString() + "-Play_Loop", 0f);
+        PdManager.Instance.Send(dollarzero.ToString() + "-Play", 1f);
+    }
 	/// <summary>
 	/// Function to reproduce song in bucle 
 	/// </summary>
 	/// <param name="song">Is the path song from the assets folder</param>
 	public void Play_Loop(string song){
-		if(!Load_Audio(song)){
-			return;
-		}
-		PdManager.Instance.Send(dollarzero.ToString ()+"-Play_Loop");
-	}
+        if (_isPlaying)
+        {
+            if (!Load_Audio(song))
+            {
+                return;
+            }
+            PdManager.Instance.Send(dollarzero.ToString() + "-Play_Loop", 1f);
+            PdManager.Instance.Send(dollarzero.ToString() + "-Play", 0f);
+        }		
+    }
 	/// <summary>
 	/// Function to stop song plays
 	/// </summary>
 	public void Stop(){
-		if(_isPlaying)
-			PdManager.Instance.Send(dollarzero.ToString ()+"-Stop");
+        if (_isPlaying)
+        {
+            PdManager.Instance.Send(dollarzero.ToString() + "-Stop");
+            PdManager.Instance.Send(dollarzero.ToString() + "-Play_Loop", 0f);
+            PdManager.Instance.Send(dollarzero.ToString() + "-Play", 0f);
+        }			
 	}
 	/// <summary>
 	/// Function to set available or unavailable the default microphone 
@@ -110,10 +120,16 @@ public class HRIRu : MonoBehaviour {
 	/// Dispose sound spatializer for sound sources object
 	/// </summary>
 	public void Available(){
+        if (_isPlaying) {
+            Debug.LogWarning("HRIRu was already enabled");
+            return;
+        }
 		if (scale <= 0f)	scale=1f;        
-        dollarzero = PdManager.Instance.OpenNewPdPatch (PdManager.Instance.APIPath()+pdPatchName);        
+        dollarzero = PdManager.Instance.OpenNewPdPatch (PdManager.Instance.APIPath(pdPatchName));        
         Volume (1f);
-		if(listener==null){
+        PdManager.Instance.Send(dollarzero.ToString()+"-Dollar",(float)dollarzero);
+        PdManager.Instance.Send(dollarzero.ToString() + "-Sample", (float)AudioSettings.outputSampleRate);
+        if (listener==null){
 			//Seek audio listeners in scene
 			AudioListener[] listeners = UnityEngine.Object.FindObjectsOfType<AudioListener>();
 			if (listeners.Length == 0) {
@@ -133,7 +149,12 @@ public class HRIRu : MonoBehaviour {
 	/// Disable sound spatializer for sound sources object
 	/// </summary>
 	public void Disable(){
-		PdManager.Instance.ClosePdPatch(dollarzero);
+        if (!_isPlaying)
+        {
+            Debug.LogWarning("HRIRu was already disable");
+            return;
+        }
+        PdManager.Instance.ClosePdPatch(dollarzero);
 		listener = null;
 		_isPlaying = false;
 	}

@@ -23,8 +23,7 @@ public class PdManager : MonoBehaviour {
 	/// </summary>
 	public bool pdDsp = true;// Is computing audio?.
 	private Pd PD; //Instance of pure data
-	private Patch manager; //Patch of PdManager
-	private string HRIRuPath="";// Path of the API HRIRu.
+	private Patch manager; //Patch of PdManager	
 	private List<Patch> _loadedPatches = new List<Patch>(); //All patches loaded
 	/// <summary>
 	/// This variable indicates if the instance of pure data start with micrhophone or not.	
@@ -49,36 +48,38 @@ public class PdManager : MonoBehaviour {
 			return _instance;
 		}
 	}
-	/// <summary>
-	/// This functions returns the input channels for microphone, if it is greater than 0 means that pure data 
-	/// is using the microphone as input.
+    /// <summary>
+	/// This function returns the absolute path for the file request on the HRIRu path in StreamingAssets.
 	/// </summary>
-	/// <returns> Number of input channels. </returns>
-	public int getNumberInputs(){
+    /// <param name="file">Name of file. </param>
+	/// <returns> Absolute path of the file. </returns>
+	public string APIPath(string file)
+    {
+        return Path.Combine(Application.streamingAssetsPath,"HRIRu/"+file);
+    }
+    /// <summary>
+    /// This function returns the input channels for microphone, if it is greater than 0 means that pure data 
+    /// is using the microphone as input.
+    /// </summary>
+    /// <returns> Number of input channels. </returns>
+    public int getNumberInputs(){
 		return numberOfInputChannel;
 	}
 	/// <summary>
-	/// This functions returns the output channels for microphone.
+	/// This function returns the output channels for microphone.
 	/// </summary>
 	/// <returns> Number of output channels. </returns>
 	public int getNumberOutputs(){
 		return numberOfOutputChannel;
 	}
     /// <summary>
-	/// This functions returns the state of the Mic., True if is active and false in otherwise.
+	/// This function returns the state of the Mic., True if is active and false in otherwise.
 	/// </summary>
 	/// <returns> Returns the state of the Mic. </returns>
     public bool MicState()
     {
         return ActMic;
     }
-    /// <summary>
-    /// This fuctions returns the HRIRu path.
-    /// </summary>
-    /// <returns> String with path of HRIRu API. </returns>
-    public string APIPath(){
-		return HRIRuPath;
-	}
 	/// <summary>
 	/// Function to load patch in pure data
 	/// </summary>
@@ -163,14 +164,13 @@ public class PdManager : MonoBehaviour {
 	{
 		if (_instance == null) {
 			_instance = this;
-			DontDestroyOnLoad (gameObject);
-            HRIRuPath=Path.GetDirectoryName(System.IO.Directory.GetFiles(Application.dataPath, "hrir.pd", SearchOption.AllDirectories)[0])+Path.DirectorySeparatorChar;            
-            PD =new Pd(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate,new List<string>() {HRIRuPath});
+			DontDestroyOnLoad (gameObject);            
+            PD =new Pd(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate);
 			//Uses this to get prints of Pure Data
-			PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
+			/*PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
 				Debug.Log(e.Symbol.Value);
-			};
-			manager=PD.LoadPatch(HRIRuPath+"pdManager.pd");
+			};*/
+			manager=PD.LoadPatch(APIPath("pdManager.pd"));
 			if (MixerChannel == null)
 				Debug.LogWarning ("Not found mixer channel...");
 			createPdMixer ();
