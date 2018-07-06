@@ -13,17 +13,18 @@ public class drone_script : MonoBehaviour {
 	public bool use_mic=false;
 	public bool start_with_hrir=false;
 	public string sound = "";
-	private bool spatializer = false;
 	// Use this for initialization
 	void Start () {
 		hrir_control=this.GetComponent<HRIRu>();
 		audioSource = this.GetComponent<AudioSource> ();
 		if (start_with_hrir) {
 			hrir_control.Available();
-			if (use_mic)
-				hrir_control.Mic (true);
-			else
-				hrir_control.Play_Loop("Prefab/Sounds/"+sound);
+            if (use_mic)
+                hrir_control.Mic(true);
+            else
+            {
+                hrir_control.Play_Loop(sound);
+            }
 			audioSource.mute = !audioSource.mute;
 		}
 		if(scale<=0f)
@@ -34,16 +35,18 @@ public class drone_script : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {        
-        if (Input.GetKeyDown(KeyCode.Space) && !start_with_hrir){
-			if (spatializer) {
+        if (Input.GetKeyDown(KeyCode.Space)){
+			if (start_with_hrir) {
 				Debug.Log ("Changing to unity spatializer...");
 				hrir_control.Disable ();
 				audioSource.mute = !audioSource.mute;
+				start_with_hrir=false;
 			} else {
 				Debug.Log ("Changing to HRIRu spatializer...");
 				audioSource.mute = !audioSource.mute;
 				hrir_control.Available ();
 				hrir_control.Play_Loop("Prefab/Sounds/"+sound);
+				start_with_hrir = true;
 			}
 		}
 		Vector3 tmp=new Vector3(0,0,0);
