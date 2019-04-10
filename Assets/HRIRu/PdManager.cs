@@ -167,9 +167,9 @@ public class PdManager : MonoBehaviour {
 			DontDestroyOnLoad (gameObject);            
             PD =new Pd(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate);
 			//Uses this to get prints of Pure Data
-			PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
+			/*PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
 				Debug.Log(e.Symbol.Value);
-			};
+			};*/
 			manager=PD.LoadPatch(APIPath("pdManager.pd"));
 			if (MixerChannel == null)
 				Debug.LogWarning ("Not found mixer channel...");

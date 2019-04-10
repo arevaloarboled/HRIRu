@@ -5,7 +5,11 @@ namespace LibPDBinding.Native
 {
 	static class Defines
 	{
-		public const string DllName = "libpdcsharp";
-		public const CallingConvention CallingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl;
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+        public const string DllName = "pd";
+#else
+        public const string DllName = "libpdcsharp";
+#endif
+        public const CallingConvention CallingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl;
 	}
 }
