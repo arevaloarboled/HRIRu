@@ -108,7 +108,7 @@ In a branch of this repository, there is a [demo](https://github.com/arevaloarbo
 
 This API uses libpd to create an interface between a Pure Data program and Unity. Libpd is a wrapper that turns Pure-data programs into an embeddable audio library. Libpd has APIs for C/C++, Objective-C, C#, Java, and Python. We used the C# API in libpd to integrate Pure-data programs in Unity.
 
-At the moment, Plug-ins included is for MacOS (.bundle) and for Linux (.so), in the case to have any problem with these Plug-ins in your OS, you would need to recompile the libpdcsharp, the exact version of Libpd used in this implementation is in [this commit of Libpd repository](https://github.com/libpd/libpd/tree/d4cc735c0f330aaed9fd4cec204089abb466ec5f). For MacOS, when you compile the .dylib, you need to change the extension to .bundle to use into Unity.
+At the moment, Plug-ins included is for MacOS (.bundle), for Linux (.so) and windows (.dll), in the case to have any problem with these Plug-ins in your OS, you would need to recompile the libpdcsharp (libpd core for windows), the exact version of Libpd used in this implementation is in [this commit of Libpd repository](https://github.com/libpd/libpd/tree/d4cc735c0f330aaed9fd4cec204089abb466ec5f). For MacOS, when you compile the .dylib, you need to change the extension to .bundle to use into Unity.
 
 # hrir~
 
