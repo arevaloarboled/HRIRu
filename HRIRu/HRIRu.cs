@@ -106,6 +106,7 @@ public class HRIRu : MonoBehaviour {
 	/// </summary>
 	/// <param name="f">Is a angle of elevation</param>
 	private void Update_Elevation (float f){
+        if (f < -40f) f = -40f;
 		PdManager.Instance.Send (dollarzero.ToString ()+"-E", f);
 	}
 	/// <summary>
@@ -113,7 +114,9 @@ public class HRIRu : MonoBehaviour {
 	/// </summary>
 	/// <param name="f">Is a distance between sound sources and listener.</param>
 	private void Update_Distance (float f){
-		PdManager.Instance.Send(dollarzero.ToString ()+"-D", f);
+        if (f < 20f) f = 20f;
+        if (f > 160f) f = 160f;
+        PdManager.Instance.Send(dollarzero.ToString ()+"-D", f);
 	}
 
 	/// <summary>
@@ -153,6 +156,10 @@ public class HRIRu : MonoBehaviour {
         {
             Debug.LogWarning("HRIRu was already disable");
             return;
+        }
+        else
+        {
+            Stop();
         }
         PdManager.Instance.ClosePdPatch(dollarzero);
 		listener = null;

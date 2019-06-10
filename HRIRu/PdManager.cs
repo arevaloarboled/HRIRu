@@ -161,22 +161,22 @@ public class PdManager : MonoBehaviour {
 	}
 	//Set up the instance of Pure-data
 	void Awake()
-	{
+	{        
 		if (_instance == null) {
 			_instance = this;
 			DontDestroyOnLoad (gameObject);            
             PD =new Pd(numberOfInputChannel, numberOfOutputChannel, AudioSettings.outputSampleRate);
 			//Uses this to get prints of Pure Data
-			/*PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
+			PD.Messaging.Print += delegate(object sender, PrintEventArgs e) {
 				Debug.Log(e.Symbol.Value);
-			};*/
+			};
 			manager=PD.LoadPatch(APIPath("pdManager.pd"));
 			if (MixerChannel == null)
 				Debug.LogWarning ("Not found mixer channel...");
 			createPdMixer ();
 			if (pdDsp) {
 				PD.Start ();
-			}			
+			}           
 		} else if (!Instance.Equals((object)this)){
 			Destroy (gameObject);
 		}
