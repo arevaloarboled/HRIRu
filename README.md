@@ -23,6 +23,11 @@ This API only works for MacOS and Windows in 64 bits architecture.
 
 >If you are using Plugins in your project, mind that HRIRu have the own Plugins directory, so, you can move the files of this directory in your own Plugins directory.
 
+To work with this API, Unity needs to have this Audio setting (`Edit > Project Settings > Audio`):
+
+* Default speaker mode as **Stereo**
+* DSP Buffer Size as **Default** (that's means a 1024 buffer size)
+
 # Usage
 
 The API has 2 scripts (located in the HRIRu directory), a Manager as a control of Pure Data instance and HRIRu for a sound source object.
