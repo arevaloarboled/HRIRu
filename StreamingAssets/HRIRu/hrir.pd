@@ -1,9 +1,9 @@
-#N canvas 486 120 1366 726 10;
+#N canvas 1229 666 1149 726 10;
 #X obj 203 24 hsl 128 15 0 359 0 0 empty empty Azimuth_(o) -2 -8 0
 10 -262144 -1 -1 0 1;
 #X obj 204 84 hsl 128 15 -40 90 0 0 empty empty Elevation_(o) -2 -8
-0 10 -262144 -1 -1 0 1;
-#X obj 202 141 hsl 128 15 20 160 0 0 empty empty Distance_(cm) -2 -8
+0 10 -262144 -1 -1 4200 1;
+#X obj 202 141 hsl 128 15 20 600 0 0 empty empty Distance_(cm) -2 -8
 0 10 -262144 -1 -1 0 1;
 #X floatatom 199 160 5 0 0 0 - - -;
 #X floatatom 201 102 5 0 0 0 - - -;
@@ -18,13 +18,13 @@
 #X obj 122 213 *~;
 #X obj 234 172 r \$0-Mic;
 #X obj 235 221 r \$0-Vol;
-#X obj 179 289 *~;
+#X obj 186 397 *~;
 #X floatatom 235 276 5 0 0 0 - - -;
-#X obj 122 289 *~, f 4;
+#X obj 129 397 *~, f 4;
 #X obj 121 159 r~ in1;
 #X obj 122 182 r~ in2;
-#X obj 121 320 throw~ out1, f 12;
-#X obj 179 339 throw~ out2;
+#X obj 128 428 throw~ out1, f 12;
+#X obj 186 447 throw~ out2;
 #X obj 122 255 hrir~ 256;
 #X obj 412 119 soundfiler;
 #X floatatom 413 142 12 0 0 0 - - -;
@@ -58,15 +58,19 @@
 #X msg 624 131 48000;
 #X obj 459 288 expr $f1 == $f2 && $f1!=0;
 #X msg -42 138 \; \$1-array const 0 -resize 0;
+#X obj 19 228 noise~;
+#X obj 27 329 expr~ if($f3>160 \, $v1*(1/pow($f3/160 \, 2)) \, $v1)
+\; if($f3>160 \, $v2*(1/pow($f3/160 \, 2)) \, $v2);
 #X connect 0 0 5 0;
 #X connect 1 0 4 0;
 #X connect 2 0 3 0;
 #X connect 3 0 23 3;
+#X connect 3 0 56 2;
 #X connect 4 0 23 2;
 #X connect 5 0 23 1;
-#X connect 6 0 1 0;
-#X connect 7 0 2 0;
-#X connect 8 0 0 0;
+#X connect 6 0 4 0;
+#X connect 7 0 3 0;
+#X connect 8 0 5 0;
 #X connect 9 0 37 0;
 #X connect 10 0 39 0;
 #X connect 11 0 28 0;
@@ -80,8 +84,8 @@
 #X connect 18 0 21 0;
 #X connect 19 0 13 0;
 #X connect 20 0 13 0;
-#X connect 23 0 18 0;
-#X connect 23 1 16 0;
+#X connect 23 0 56 0;
+#X connect 23 1 56 1;
 #X connect 24 0 25 0;
 #X connect 25 0 29 0;
 #X connect 25 0 38 0;
@@ -118,3 +122,6 @@
 #X connect 51 0 24 0;
 #X connect 52 0 27 0;
 #X connect 53 0 34 0;
+#X connect 55 0 23 0;
+#X connect 56 0 18 0;
+#X connect 56 1 16 0;
