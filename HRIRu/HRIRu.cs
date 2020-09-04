@@ -174,28 +174,43 @@ public class HRIRu : MonoBehaviour {
 	// Update is called once per frame
 	void LateUpdate () {
 		if(_isPlaying){
+			float azimuth, elevation, distance;			
 			//Calculate distance between listener and sound source	
-			Update_Distance (Mathf.Abs (Vector3.Distance (transform.position,listener.transform.position))*scale);				
-			//Calculate diretion vector between listener and sound source	
-			Vector3 dir=(transform.position-listener.transform.position).normalized;
-			//Calculate angle of elevation between listener and sound source
-			Vector3 dirE=Vector3.ProjectOnPlane (dir, listener.transform.right);
-			float elevation = - Vector3.SignedAngle (listener.transform.forward, dirE, listener.transform.right);
-			if (elevation<-90f) {
-				elevation = -90-(elevation % 90);
+			distance = Mathf.Abs(Vector3.Distance(transform.position, listener.transform.position)) * scale;	
+			//get the direction of the sound source			
+			Vector3 dir = (transform.position - listener.transform.position).normalized;
+			//Calculate angle of elevation between listener and sound source			
+			if (Vector3.Cross(listener.transform.right, Vector3.ProjectOnPlane(dir, listener.transform.up)) == Vector3.zero)
+			{
+				Vector3 dirE = Vector3.ProjectOnPlane(dir, listener.transform.forward);
+				elevation = Vector3.SignedAngle(listener.transform.right, dirE, listener.transform.forward);				
+			}			
+			else
+			{
+				Vector3 dirE = Vector3.ProjectOnPlane(dir, listener.transform.right);
+				elevation = -Vector3.SignedAngle(listener.transform.forward, dirE, listener.transform.right);				
+			}			
+			Debug.LogWarning(elevation);
+			elevation = elevation % 180 == 0 ? 0 : elevation;			
+			if (elevation < -90f)
+			{
+				elevation = -90 - (elevation % 90);
 			}
-			if (elevation > 90f) {
+			if (elevation > 90f)
+			{
 				elevation = 90 - (elevation % 90);
 			}
-			Update_Elevation (elevation);
 			//Calculate angle of azimuth between listener and sound source
-			Vector3 dirA=Vector3.ProjectOnPlane (dir, listener.transform.up);
-			float azimuth = - Vector3.SignedAngle (listener.transform.forward, dirA, listener.transform.up);
-			if (azimuth < 0f) {
+			Vector3 dirA = Vector3.ProjectOnPlane(dir, listener.transform.up);
+			azimuth = Vector3.SignedAngle(listener.transform.forward, dirA, listener.transform.up);
+			if (azimuth < 0f)
+			{				
 				azimuth = 360f + azimuth;
 			}
-			Update_Azimuth (azimuth);
-			//Debug.Log ("E: "+elevation.ToString()+"\tA: "+azimuth.ToString());
+			azimuth = 360f - azimuth;			
+			Update_Azimuth(azimuth);
+			Update_Distance(distance);
+			Update_Elevation(elevation);
 		}
 	}
 }
